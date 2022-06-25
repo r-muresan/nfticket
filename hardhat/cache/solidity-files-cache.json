@@ -77,8 +77,8 @@
       ]
     },
     "C:\\Users\\bullm\\Documents\\Projects\\nfticket\\hardhat\\contracts\\NFTicket1155.sol": {
-      "lastModificationDate": 1656174700462,
-      "contentHash": "4f23658ba26a5a99d38169d19ef86d8d",
+      "lastModificationDate": 1656183878371,
+      "contentHash": "09b9113784a707807703b4c0a4a7250d",
       "sourceName": "hardhat/contracts/NFTicket1155.sol",
       "solcConfig": {
         "version": "0.8.4",

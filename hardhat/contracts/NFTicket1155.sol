@@ -45,10 +45,9 @@ contract NFTicket1155 is ERC1155, Ownable, ERC1155Supply {
         string description;
         string image;
         string location;
-        string host;
+        address host;
         uint256 eventDate;
         bool hasWhitelist;
-        string tokenURI;
         uint256 price;
         address[] whitelisted;
         string link;
@@ -81,12 +80,10 @@ contract NFTicket1155 is ERC1155, Ownable, ERC1155Supply {
     }
 
     function createEvent(uint256 _supply, string memory _name, string memory _description, string memory _image, 
-        string memory _location, string memory _host, uint256 _eventDate, bool _hasWhitelist, string memory _tokenURI, 
+        string memory _location, address _host, uint256 _eventDate, bool _hasWhitelist, string memory _tokenURI, 
         uint256 _price, string memory _link) 
         public 
     {
-        eventID += 1;
-
         require(_eventDate > block.timestamp, "event must happen in the future");
 
         address[] memory users;
@@ -101,7 +98,6 @@ contract NFTicket1155 is ERC1155, Ownable, ERC1155Supply {
             host:  _host, 
             eventDate: _eventDate,
             hasWhitelist: _hasWhitelist,
-            tokenURI: _tokenURI,
             price: _price,
             whitelisted: users,
             link: _link
@@ -110,6 +106,8 @@ contract NFTicket1155 is ERC1155, Ownable, ERC1155Supply {
         tokenURIs[eventID] = _tokenURI;
 
         eventOwner[eventID] = msg.sender;  
+
+        eventID += 1;
     }
 
     function setWhitelist(uint256 _eventId, address[] memory _whitelisted) public onlyEventOwner(_eventId){
@@ -163,7 +161,7 @@ contract NFTicket1155 is ERC1155, Ownable, ERC1155Supply {
     function getActiveEvents() public view returns (Event[] memory){
         uint256 count;
         for(uint256 i; i < eventID; i++){
-            if (eventInfo[i].eventDate < block.timestamp){
+            if (eventInfo[i].eventDate > block.timestamp){
                 count++;
             }
         }
@@ -172,7 +170,7 @@ contract NFTicket1155 is ERC1155, Ownable, ERC1155Supply {
         uint256 index;
 
         for(uint256 i; i < eventID; i++){
-            if (eventInfo[i].eventDate < block.timestamp){
+            if (eventInfo[i].eventDate > block.timestamp){
                 activeEvents[index] = eventInfo[i];
                 index++;
             }

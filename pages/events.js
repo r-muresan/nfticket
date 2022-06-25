@@ -18,9 +18,22 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { formatDistance } from "date-fns";
 import PeopleIcon from "@mui/icons-material/People";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { useMultiEvents } from "../util/NFTContractInterface.js";
+import Grid from "@mui/material/Grid";
 
 const BuyPage = () => {
   const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
+  const { loading, events } = useMultiEvents();
+
+  console.log(events);
+
+  if (loading) {
+    return (
+      <Box height="calc(100vh - 48px)">
+        <LoadingView />
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -33,12 +46,32 @@ const BuyPage = () => {
       <Box display="flex" flexDirection="column" maxWidth={1000} width="100%">
         <Typography
           variant="h2"
-          size={titleSize}
+          fontSize={titleSize}
           color="black"
           fontWeight={400}
         >
           Events
         </Typography>
+        <Grid
+          container
+          spacing={2}
+          direction="row"
+          justify="flex-start"
+          alignItems="flex-start"
+        >
+          {events.map((event) => (
+            <Grid item xs={12} sm={6} md={4} key={event.id}>
+              <EventCard
+                title={event.name}
+                desc={event.desc}
+                image={event.image}
+                startTime={event.eventDate}
+                maxParticipants={event.maxParticipants}
+                eventId={event.id}
+              />
+            </Grid>
+          ))}
+        </Grid>
       </Box>
     </Box>
   );
@@ -56,9 +89,17 @@ export const EventCard = ({
   const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
 
   return (
-    <Card sx={{ backgroundColor: SECONDARY, width: "600px" }}>
+    <Card sx={{ backgroundColor: SECONDARY }}>
       <CardActionArea href={eventId ? `/event/${eventId}` : undefined}>
-        <CardMedia component="img" height="300" width="500" image={image} />
+        <CardMedia
+          component="img"
+          height="300"
+          width="500"
+          image={
+            image ||
+            "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg"
+          }
+        />
 
         <CardContent>
           <Box mb={2}>

@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import { BACKGROUND, getSize, SECONDARY } from "../util/theme.js";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { LoadingView } from "../components/LoadingView";
+import LoadingView from "../components/LoadingView";
 import Image from "next/image";
 import UploadIcon from "@mui/icons-material/Upload";
 import IconButton from "@mui/material/IconButton";
@@ -14,6 +14,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { useCreateEvent } from "../util/NFTContractInterface.js";
 import Switch from "@mui/material/Switch";
 import { EventCard } from "./events.js";
+import { addDays } from "date-fns";
 
 const HostPage = () => {
   const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
@@ -21,7 +22,7 @@ const HostPage = () => {
   const [eventDescription, setEventDescription] = useState("");
   const [eventLocation, setEventLocation] = useState("");
   const [maxParticipants, setMaxParticipants] = useState(100);
-  const [eventDate, setEventDate] = useState(new Date());
+  const [eventDate, setEventDate] = useState(addDays(new Date(), 3));
   const [eventImage, setEventImage] = useState();
   const [eventImageRaw, setEventImageRaw] = useState();
   const [isWhitelisted, setIsWhitelisted] = useState(false);
@@ -59,7 +60,7 @@ const HostPage = () => {
       <Box display="flex" flexDirection="column" maxWidth={1000} width="100%">
         <Typography
           variant="h2"
-          size={titleSize}
+          fontSize={titleSize}
           color="black"
           fontWeight={400}
         >

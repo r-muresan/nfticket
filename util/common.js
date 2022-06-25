@@ -1,3 +1,4 @@
+import { fromUnixTime } from "date-fns";
 import { ethers } from "ethers";
 import BlockFactory from "/hardhat/contractArtifacts/hardhat/contracts/NFTicket1155.sol/NFTicket1155.json";
 
@@ -50,4 +51,20 @@ export const requestFunction = async ({
     console.log(err);
     failMessage?.();
   }
+};
+
+export const parseEvent = (event) => {
+  return {
+    id: parseInt(event.id),
+    eventDate: fromUnixTime(parseInt(event.eventDate)),
+    name: event.name,
+    description: event.description,
+    location: event.location,
+    image: event.image.replace("ipfs://", "https://gateway.pinata.cloud/ipfs/"),
+    whitelisted: event.whitelisted,
+    maxParticipants: parseInt(event.supply),
+    price: parseInt(event.price),
+    link: event.link,
+    host: event.host,
+  };
 };

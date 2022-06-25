@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 import { useWeb3React } from "@web3-react/core";
-import { getNFTContract, getNFTContractSignature } from "./common";
+import {
+  getNFTContract,
+  getNFTContractSignature,
+  parseEvent,
+  requestFunction,
+} from "./common";
 import { getEventId, useAlert } from "./hooks";
 import { NFTStorage } from "nft.storage";
-import { requestFunction } from "./common";
+import { getUnixTime } from "date-fns";
 
 const client = new NFTStorage({
   token: process.env.NEXT_PUBLIC_STORAGE_API_KEY,
@@ -13,7 +18,26 @@ export const useMultiEvents = () => {
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState([]);
 
-  const getEvents = () => {};
+  useEffect(() => {
+    getEvents();
+  }, []);
+
+  const getEvents = async () => {
+    const contract = getNFTContract();
+
+    await requestFunction({
+      func: async () => {
+        setLoading(true);
+        const events = await contract.getActiveEvents();
+        setEvents(events.map((e) => parseEvent(e)));
+      },
+      callback: () => setLoading(false),
+      failMessage: () =>
+        setAlert({ message: "Could not get events", type: "error" }),
+    });
+  };
+
+  return { loading, events };
 };
 
 export const useCreateEvent = () => {
@@ -49,14 +73,25 @@ export const useCreateEvent = () => {
           description,
           image,
         });
-
         console.log(metadata);
 
-        const tx = await contract.createEvent(amount);
+        const tx = await contract.createEvent(
+          maxParticipants,
+          name,
+          description,
+          metadata.data.image.href,
+          location,
+          account,
+          getUnixTime(date),
+          isWhitelisted,
+          metadata.url,
+          0,
+          eventLink
+        );
         setLoading(true);
+
         setAlert({ message: "Please wait", type: "info" });
         await tx.wait();
-        setLoading(false);
       },
       successMessage: () =>
         setAlert({
@@ -66,20 +101,23 @@ export const useCreateEvent = () => {
       failMessage: () =>
         setAlert({ message: "Transaction failed", type: "error" }),
     });
+    setLoading(false);
   };
 
   return { loading, createEvent };
 };
 
 export const useSingleEvent = () => {
-  const { eventId } = getEventId();
+  const eventId = getEventId();
   const [loading, setLoading] = useState(true);
   const [event, setEvent] = useState();
   const { account, library } = useWeb3React();
   const { setAlert } = useAlert();
 
   useEffect(() => {
-    getEvent();
+    if (eventId) {
+      getEvent();
+    }
   }, [eventId]);
 
   const getEvent = async () => {
@@ -89,12 +127,12 @@ export const useSingleEvent = () => {
       func: async () => {
         setLoading(true);
         const event = await contract.getEvent(eventId);
-        setEvent(event);
+        setEvent(parseEvent(event));
       },
+      callback: () => setLoading(false),
       failMessage: () =>
         setAlert({ message: "Could not get event.", type: "error" }),
     });
-    setLoading(false);
   };
 
   return { loading, event };

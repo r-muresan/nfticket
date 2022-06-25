@@ -4,7 +4,7 @@ import { AlertContext } from "../components/Providers/AlertProvider";
 
 export const getEventId = () => {
   const router = useRouter();
-  const eventId = parseInt(router.query["eventId"]);
+  const eventId = parseInt(router.query.event);
 
   return eventId;
 };
