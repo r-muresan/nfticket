@@ -3,20 +3,23 @@ pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 
-contract NFTicket1155 is ERC1155, Ownable {
+contract NFTicket1155 is ERC1155, Ownable, ERC1155Supply {
     mapping(uint256 => address) public eventOwner;
     mapping(uint256 => Event ) eventInfo;
     mapping(uint256 => address[]) buyers;
     //tells us all addrs that bought a ticket for that event
     mapping(uint256 => mapping(address => bool)) invited;
-    mapping(uint256 => mapping(address => bytes32)) passwords; 
+    mapping(uint256 => mapping(address => bytes32)) passwordHash;
+    //eventid -> buyer ->password hash 
     mapping(uint256 => mapping(address => bool)) claimed; //one ticket per addr
     mapping(uint256 => mapping(address => bool)) public bought;
     mapping(uint256 => string) tokenURIs; 
     mapping(uint256 => uint256) eventEscrow;
     mapping(uint256 => mapping(address => uint256)) credits;
     mapping(uint256 => uint256) votesForRefund;
+
     //event id -> amt in escrow
     uint256 internal eventID;
 
@@ -38,22 +41,26 @@ contract NFTicket1155 is ERC1155, Ownable {
     struct Event{
         uint256 id;
         uint256 supply;
+        string name; 
+        string description;
+        string image;
+        string location;
+        string host;
         uint256 eventDate;
         bool hasWhitelist;
+        string tokenURI;
         uint256 price;
-        string applicationLink;
-
-        //if there is a whitelist, they can only Mint if theyre on the list
-        //if there is not a whitelist, anyone can mint
+        address[] whitelisted;
+        string link;
     }
 
     modifier onlyNewBuyer(uint256 id){
-        require(bought[id][msg.sender] = false, "caller already minted a ticket");
+        require(bought[id][msg.sender] == false, "caller already minted a ticket");
         _;
     }
 
     modifier onlyInvitedBuyer(uint256 id){
-        require(invited[id][msg.sender] = true, "caller is not a buyer");
+        require(invited[id][msg.sender] == true, "caller is not a buyer");
         _;
     }
 
@@ -63,7 +70,7 @@ contract NFTicket1155 is ERC1155, Ownable {
     }
 
     modifier eventNotPassed(uint256 id) {
-        require(eventInfo[id].eventDate < block.timestamp, "event has passed");
+        require(eventInfo[id].eventDate > block.timestamp, "event has passed");
         _;
     }
 
@@ -73,57 +80,44 @@ contract NFTicket1155 is ERC1155, Ownable {
         _;
     }
 
-    function createEvent(uint256 _supply, uint256 _eventDate, string memory newuri, uint256 _price,
-        string memory _applicationLink) 
+    function createEvent(uint256 _supply, string memory _name, string memory _description, string memory _image, 
+        string memory _location, string memory _host, uint256 _eventDate, bool _hasWhitelist, string memory _tokenURI, 
+        uint256 _price, string memory _link) 
         public 
-        onlyEventOwner(eventID)
     {
         eventID += 1;
 
-        require(_eventDate < block.timestamp, "event must happen in the future");
+        require(_eventDate > block.timestamp, "event must happen in the future");
+
+        address[] memory users;
 
         eventInfo[eventID] = Event({
             id: eventID,
             supply: _supply,
+            name: _name, 
+            description: _description, 
+            image: _image,
+            location: _location, 
+            host:  _host, 
             eventDate: _eventDate,
-            hasWhitelist: false,
+            hasWhitelist: _hasWhitelist,
+            tokenURI: _tokenURI,
             price: _price,
-            applicationLink: _applicationLink
+            whitelisted: users,
+            link: _link
         });
 
-        tokenURIs[eventID] = newuri;
+        tokenURIs[eventID] = _tokenURI;
 
         eventOwner[eventID] = msg.sender;  
     }
 
-    function createEvent(uint256 _supply, uint256 _eventDate, address[] memory _buyers, 
-        string memory tokenURI, uint256 _price, string memory _applicationLink) 
-        public 
-        onlyEventOwner(eventID)
-    {
-        eventID += 1;
-
-        require(_eventDate < block.timestamp, "event must happen in the future");
-        
-        eventInfo[eventID] = Event({
-            id: eventID,
-            supply: _supply,
-            eventDate: _eventDate,
-            hasWhitelist: true,
-            price: _price,
-            applicationLink: _applicationLink
-        });
-
-        for(uint256 i; i < _buyers.length; i++){
-            invited[eventID][_buyers[i]] = true;
-        }
-
-        tokenURIs[eventID] = tokenURI;
-
-        eventOwner[eventID] = msg.sender;
+    function setWhitelist(uint256 _eventId, address[] memory _whitelisted) public onlyEventOwner(_eventId){
+        Event storage _event = eventInfo[_eventId];
+        _event.whitelisted = _whitelisted;
     }
 
-    function uri(uint256 id) public view override returns(string memory){
+    function getURI(uint256 id) public view returns(string memory){
         return tokenURIs[id];
     }
 
@@ -134,14 +128,17 @@ contract NFTicket1155 is ERC1155, Ownable {
         eventNotPassed(id)
     {
         Event storage _event = eventInfo[id];
+
+        require(totalSupply(id) <= _event.supply, "all tickets have been sold");
+
         if (_event.hasWhitelist){
             require(invited[id][msg.sender] == true, "you are not invited to this event");
         }   
         require(msg.value == _event.price, "incorrect price sent");
 
         eventEscrow[id] += msg.value;
-
-        bought[id][msg.sender] == true; 
+        
+        bought[id][msg.sender] = true;
 
         buyers[id].push(msg.sender);
 
@@ -150,8 +147,12 @@ contract NFTicket1155 is ERC1155, Ownable {
         _mint(msg.sender, id, amount, data);
     }
 
+    function setPassword(uint256 _eventId, bytes32 _password) public onlyAttendee(_eventId) {
+        passwordHash[_eventId][msg.sender] = _password;
+    }
+
     function queryPassword(uint256 _id, address _user) public view onlyOwner returns(bytes32) {
-        return passwords[_id][_user];
+        return passwordHash[_id][_user];
     }
 
     function claimTicket(uint _id, address _user) public onlyOwner {
@@ -187,20 +188,6 @@ contract NFTicket1155 is ERC1155, Ownable {
         return bought[_id][user];
     }
 
-    function allowDepositPull(uint256 _eventId) public onlyOwner {
-
-        Event storage _event = eventInfo[_eventId];
-
-        address[] memory _buyers = buyers[_eventId];
-
-        for(uint256 i; i < _buyers.length; i++){
-            address buyer = _buyers[i];
-            if(bought[_eventId][buyer] == true){
-                credits[_eventId][buyer] = _event.price;
-            }
-        }
-    }
-
     function withdrawDeposit(uint256 _eventId) public onlyAttendee(_eventId) {
 
         uint amount = credits[_eventId][msg.sender];
@@ -233,9 +220,13 @@ contract NFTicket1155 is ERC1155, Ownable {
         votesForRefund[_eventId] += 1;
         uint256 percentage = (votesForRefund[_eventId]/buyers[_eventId].length)*100;
         if(percentage >= 90) {
-            allowDepositPull(_eventId);
             _burn(msg.sender, _eventId, balanceOf(msg.sender, _eventId));
         }
+    }
+
+    function getEvent(uint256 _eventId) public view returns(Event memory){
+        Event storage _event = eventInfo[_eventId];
+        return _event;
     }
 
     function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
@@ -243,5 +234,12 @@ contract NFTicket1155 is ERC1155, Ownable {
         onlyOwner
     {
         _mintBatch(to, ids, amounts, data);
+    }
+
+    function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
+        internal
+        override(ERC1155, ERC1155Supply)
+    {
+        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
 }
