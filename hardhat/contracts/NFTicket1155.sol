@@ -55,6 +55,7 @@ contract NFTicket1155 is ERC1155, Ownable {
         public 
         onlyEventOwner(eventID)
     {
+        eventID += 1;
 
         eventInfo[eventID] = Event({
             id: eventID,
@@ -62,13 +63,9 @@ contract NFTicket1155 is ERC1155, Ownable {
             hasWhitelist: false
         });
 
-        _setURI(newuri);
-
         tokenURIs[eventID] = newuri;
 
-        eventOwner[eventID] = msg.sender;
-
-        eventID += 1;
+        eventOwner[eventID] = msg.sender;  
     }
 
     function createEvent(uint256 _supply, address[] memory _buyers, string memory tokenURI) 
@@ -76,6 +73,7 @@ contract NFTicket1155 is ERC1155, Ownable {
         onlyEventOwner(eventID)
     {
         eventID += 1;
+        
         eventInfo[eventID] = Event({
             id: eventID,
             supply: _supply,
