@@ -57,7 +57,7 @@ const [position, setPosition] = useState(0);
   );
 }
 
-const isActive = (eventArray) => {
+const IsActive = (eventArray) => {
     const activeProposals = eventArray.filter(
         proposal => proposal.voteDelay + prosposal.creationTime < Date.now());
     const inactiveProposals = eventArray.filter(
@@ -65,7 +65,7 @@ const isActive = (eventArray) => {
     return {activeProposals, inactiveProposals};
 }
 
-const setProposals = (eventArray) => {
+const SetProposals = (eventArray) => {
     const {activeProposals, inactiveProposals} = isActive(eventArray);
     for (let i = 0; i < activeProposals.length; i++) {
         return(
@@ -80,12 +80,11 @@ const setProposals = (eventArray) => {
     }
 }
 
-const activeEvent = (event) => {
+const ActiveEvent = (event) => {
     return(   
     <Box>
         <Typography
             variant="h4"
-            size={titleSize}
             color="black"
             fontWeight={400}
             marginTop={5}
@@ -120,7 +119,7 @@ const inactiveEvent = (event) => {
     <Box>
          <Typography
             variant="h4"
-            size={titleSize}
+           
             color="black"
             fontWeight={400}
             marginTop={5}
@@ -145,12 +144,11 @@ const inactiveEvent = (event) => {
     )
 }
 
-const eventDetails = (event) => {
+const EventDetails = ({event}) => {
     return(
     <Box>
         <Typography
           variant="h4"
-          size={titleSize}
           color="black"
           fontWeight={400}
           marginTop={5}
@@ -159,10 +157,10 @@ const eventDetails = (event) => {
         </Typography>
         
         <Box sx={{ border: 1 }} borderRadius={'16px'} height={150} p={2} boxShadow={3} bgcolor={SECONDARY}>
-            <Typography>Name </Typography>
-            <Typography>Host </Typography>
-            <Typography>Date</Typography>
-            <Typography>Location</Typography>
+            <Typography marginBottom={1}>Name: {event.name}  </Typography>
+            <Typography marginBottom={1}>Host: {event.host} </Typography>
+            <Typography marginBottom={1}>Date: {event.eventDate.toString()}</Typography>
+            <Typography>Location{event.location}</Typography>
         </Box>
     </Box>
     )
@@ -193,9 +191,10 @@ const Event = () => {
       marginBottom={5}  
     >
       <Box display="flex" flexDirection="column" maxWidth={1000} width="100%">
+        <EventDetails event={event} />
+      </Box>
     
         
-    </Box>
     </Box>
   );
 };

@@ -107,6 +107,7 @@ export const useCreateEvent = () => {
   return { loading, createEvent };
 };
 
+
 export const useSingleEvent = () => {
   const eventId = getEventId();
   const [loading, setLoading] = useState(true);
