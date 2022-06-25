@@ -80,7 +80,10 @@ const Event = () => {
           <Box width={400} height={400} position="relative" marginBottom={4}>
             {event.image && (
               <Image
-                src={event.image}
+                src={
+                  event.image ||
+                  "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg"
+                }
                 layout="fill"
                 objectFit="cover"
                 className="rounded_md"
@@ -153,15 +156,16 @@ const AdminControl = ({ event }) => {
       <Typography fontSize={subtitleSize} fontWeight={500}>
         Configure your event
       </Typography>
-      <TextField
-        label="Description Name"
-        value={eventDescription}
-        multiline
-        minRows={3}
-        maxRows={5}
-        onChange={(e) => setEventDescription(e.target.value)}
-      />
-      ;
+      {event.hasWhitelist && (
+        <TextField
+          label="Whitelisted addresses"
+          value={whitelisted}
+          multiline
+          minRows={3}
+          maxRows={5}
+          onChange={(e) => setWhitelisted(e.target.value)}
+        />
+      )}
     </Box>
   );
 };
