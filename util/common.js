@@ -1,6 +1,8 @@
 import { fromUnixTime } from "date-fns";
 import { ethers } from "ethers";
-import BlockFactory from "/hardhat/contractArtifacts/hardhat/contracts/NFTicket1155.sol/NFTicket1155.json";
+
+import NFTicket1155 from "/hardhat/contractArtifacts/hardhat/contracts/NFTicket1155.sol/NFTicket1155.json";
+import Governance from "/hardhat/contractArtifacts/hardhat/contracts/Governance.sol/Governance.json";
 
 export const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -11,17 +13,26 @@ export const formatAddress = (address) => {
 };
 
 export const getNFTContract = () => {
-  let provider;
-  if (window?.ethereum) {
-    provider = new ethers.providers.Web3Provider(window.ethereum);
-  } else {
-    provider = new ethers.providers.getDefaultProvider(
-      process.env.NEXT_PUBLIC_NETWORK_URL
-    );
-  }
+  const provider = new ethers.providers.getDefaultProvider(
+    process.env.NEXT_PUBLIC_NETWORK_URL
+  );
+
   const contract = new ethers.Contract(
     process.env.NEXT_PUBLIC_NFT_CONTRACT,
-    BlockFactory.abi,
+    NFTicket1155.abi,
+    provider
+  );
+  return contract;
+};
+
+export const getGovernanceContract = () => {
+  const provider = new ethers.providers.getDefaultProvider(
+    process.env.NEXT_PUBLIC_NETWORK_URL
+  );
+
+  const contract = new ethers.Contract(
+    process.env.NEXT_PUBLIC_GOVERNANCE_CONTRACT,
+    Governance.abi,
     provider
   );
   return contract;
@@ -30,7 +41,17 @@ export const getNFTContract = () => {
 export const getNFTContractSignature = async (signer) => {
   const contract = new ethers.Contract(
     process.env.NEXT_PUBLIC_NFT_CONTRACT,
-    BlockFactory.abi,
+    NFTicket1155.abi,
+    signer
+  );
+
+  return contract;
+};
+
+export const getGovernanceContractSignature = async (signer) => {
+  const contract = new ethers.Contract(
+    process.env.NEXT_PUBLIC_GOVERNANCE_CONTRACT,
+    Governance.abi,
     signer
   );
 

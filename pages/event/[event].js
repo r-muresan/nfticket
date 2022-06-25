@@ -10,6 +10,10 @@ import { formatRelative } from "date-fns";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PeopleIcon from "@mui/icons-material/People";
 import { useWeb3React } from "@web3-react/core";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
+import SettingsIcon from "@mui/icons-material/Settings";
+import TextField from "@mui/material/TextField";
+import { useState } from "react";
 
 const Event = () => {
   const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
@@ -28,31 +32,29 @@ const Event = () => {
 
   const ControlPanel =
     account === event.host ? (
-      <Box>
-        <Typography fontSize={subtitleSize} fontWeight={500}>
-          Claim your ticket
-        </Typography>
-      </Box>
+      <AdminControl event={event} />
     ) : event.hasWhitelist && event.whitelisted.includes(account) ? (
-      <Box>
+      <Box display="flex" alignItems="center" flexDirection="column">
+        <ConfirmationNumberIcon sx={{ fontSize: titleSize }} />
         <Typography fontSize={subtitleSize} fontWeight={500}>
           You are whitelisted, claim your ticket
         </Typography>
       </Box>
     ) : event.hasWhitelist && account ? (
-      <Box>
+      <Box display="flex" alignItems="center" flexDirection="column">
         <Typography fontSize={subtitleSize} fontWeight={500}>
           Sorry, you are not whitelisted
         </Typography>
       </Box>
     ) : account ? (
-      <Box>
+      <Box display="flex" alignItems="center" flexDirection="column">
+        <ConfirmationNumberIcon sx={{ fontSize: titleSize }} />
         <Typography fontSize={subtitleSize} fontWeight={500}>
           Claim your ticket
         </Typography>
       </Box>
     ) : (
-      <Box>
+      <Box display="flex" alignItems="center" flexDirection="column">
         <Typography fontSize={subtitleSize} fontWeight={500}>
           Sign in to claim your ticket
         </Typography>
@@ -137,6 +139,29 @@ const Event = () => {
           {ControlPanel}
         </Box>
       </Box>
+    </Box>
+  );
+};
+
+const AdminControl = ({ event }) => {
+  const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
+  const [whitelisted, setWhitelisted] = useState(event.whitelisted);
+
+  return (
+    <Box display="flex" alignItems="center" flexDirection="column">
+      <SettingsIcon sx={{ fontSize: titleSize }} />
+      <Typography fontSize={subtitleSize} fontWeight={500}>
+        Configure your event
+      </Typography>
+      <TextField
+        label="Description Name"
+        value={eventDescription}
+        multiline
+        minRows={3}
+        maxRows={5}
+        onChange={(e) => setEventDescription(e.target.value)}
+      />
+      ;
     </Box>
   );
 };
