@@ -80,4 +80,18 @@ contract Governance is Ownable{
         }
         return chosenOption;
     }
+
+    function getProposals(uint256 _eventId) public view returns(Proposal[] memory){
+        uint256[] memory proposalIds = new uint256[](0);
+        for(uint256 i; i < proposalToEvent.length; i++){
+            if(proposalToEvent[i] == _eventId){
+                proposalIds.push(i);
+            }
+        }
+        Proposal[] memory proposals = new Proposal[](proposalIds.length);
+        for(uint256 i; i < proposalIds.length; i++){
+            proposals[i] = proposalInfo[proposalIds[i]];
+        }
+        return proposals;
+    }
 }

@@ -57,8 +57,12 @@ const [position, setPosition] = useState(0);
   );
 }
 
-const isActive = (event) => {'
-
+const isActive = (eventArray) => {
+    const activeProposals = eventArray.filter(
+        proposal => proposal.voteDelay + prosposal.creationTime < Date.now());
+    const inactiveProposals = eventArray.filter(
+        proposal => proposal.voteDelay + prosposal.creationTime > Date.now());
+    return {activeProposals, inactiveProposals};
 }
 
 const Event = () => {
