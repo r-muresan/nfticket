@@ -13,6 +13,7 @@ contract NFTicket1155 is ERC1155, Ownable {
     mapping(uint256 => mapping(address => bool)) public bought;
     mapping(uint256 => string) tokenURIs; 
     uint256 internal eventID;
+
     //every nft is the same so no need to redeploy contract for every single token minted
     //ticketId => (buyer => buyer Amt);
     //if claimed setup is equivalent to balanceOf, then claimed is true
@@ -31,7 +32,9 @@ contract NFTicket1155 is ERC1155, Ownable {
     struct Event{
         uint256 id;
         uint256 supply;
+        uint256 eventDate;
         bool hasWhitelist;
+
         //if there is a whitelist, they can only Mint if theyre on the list
         //if there is not a whitelist, anyone can mint
     }
@@ -51,15 +54,25 @@ contract NFTicket1155 is ERC1155, Ownable {
         _;
     }
 
-    function createEvent(uint256 _supply, string memory newuri) 
+    modifier eventNotPassed(uint256 id){
+        require eventInfo[id].eventDate < block.timestamp, "event has passed");
+    }
+
+
+    //
+
+    function createEvent(uint256 _supply, uint256 _eventDate, string memory newuri) 
         public 
         onlyEventOwner(eventID)
     {
         eventID += 1;
 
+        require(_eventDate < block.timestamp, "event must happen in the future");
+
         eventInfo[eventID] = Event({
             id: eventID,
             supply: _supply,
+            eventDate: _eventDate,
             hasWhitelist: false
         });
 
@@ -68,15 +81,18 @@ contract NFTicket1155 is ERC1155, Ownable {
         eventOwner[eventID] = msg.sender;  
     }
 
-    function createEvent(uint256 _supply, address[] memory _buyers, string memory tokenURI) 
+    function createEvent(uint256 _supply, uint256 _eventDate, address[] memory _buyers, string memory tokenURI) 
         public 
         onlyEventOwner(eventID)
     {
         eventID += 1;
+
+        require(_eventDate < block.timestamp, "event must happen in the future");
         
         eventInfo[eventID] = Event({
             id: eventID,
             supply: _supply,
+            eventDate: _eventDate,
             hasWhitelist: true
         });
 
@@ -97,7 +113,8 @@ contract NFTicket1155 is ERC1155, Ownable {
 
     function mint(uint256 id, uint256 amount, bytes memory data)
         public
-        onlyNewBuyer(eventID)
+        onlyNewBuyer(id)
+        eventNotPassed(id)
     {
         Event storage _event = eventInfo[id];
         if (_event.hasWhitelist){
@@ -116,6 +133,16 @@ contract NFTicket1155 is ERC1155, Ownable {
     function claimTicket(uint _id, address _user) public onlyOwner {
         require(claimed[_id][_user] == false, "ticket already claimed");
         claimed[_id][_user] = true;
+    }
+
+    function getActiveEvents() public view returns (Event[]){
+        Event[] activeEvents;
+        for(uint256 i; i < eventID; i++){
+            if (eventInfo[i].eventDate < block.timestamp){
+                activeEvents.push(eventInfo[i]);
+            }
+        }
+        return activeEvents;
     }
 
     function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
