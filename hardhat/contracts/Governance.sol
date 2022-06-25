@@ -12,11 +12,11 @@ contract Governance is Ownable{
         nfticket = NFTicket1155(_nfticket);
     }
     
-    //mapping(uint256 => mapping(uint256 => Proposal)) proposalsByEvent; 
-    //event id -> proposal id -> proposal
     mapping(uint256 => mapping(address => bool)) hasVoted;
     //proposal id -> user addr -> has voted?
     mapping(uint256 => uint256) proposalToEvent;
+    //proposal id -> event id
+    mapping(uint256 => uint256[]) eventToProposal;
     mapping(uint256 => uint256) numProposals;
     //eventId --> num proposals for that event
     mapping(uint256 => Proposal) proposalInfo;
@@ -44,6 +44,7 @@ contract Governance is Ownable{
         proposalInfo[proposalID].votes = _votes;
         
         proposalToEvent[proposalID] = _eventId;
+        eventToProposal[_eventId].push(proposalInfo[proposalID].id);
         numProposals[_eventId]++;
     }
 
@@ -90,20 +91,12 @@ contract Governance is Ownable{
     }
 
     function getProposals(uint256 _eventId) public view returns(Proposal[] memory){
-        uint256[] memory proposalIds = new uint256[](numProposals[_eventId]);
-        uint256 index;
-
+        Proposal[] memory _proposals = new Proposal[](eventToProposal[_eventId].length);
         
-        for(uint256 i; i < numProposals[_eventId]; i++){   
-            if(proposalToEvent[i] == _eventId){
-                proposalIds[index] = i;
-                index++;
-            }
+        for(uint256 i; i < eventToProposal[_eventId].length; i++){
+            Proposal memory _proposal = proposalInfo[eventToProposal[_eventId][i]];
+            _proposals[i] = _proposal;
         }
-        Proposal[] memory proposals = new Proposal[](proposalIds.length);
-        for(uint256 i; i < proposalIds.length; i++){
-            proposals[i] = proposalInfo[proposalIds[i]];
-        }
-        return proposals;
+        return _proposals;
     }
 }
