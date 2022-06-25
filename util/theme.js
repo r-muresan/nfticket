@@ -13,7 +13,11 @@ export const theme = createTheme({
     },
     secondary: {
       main: SECONDARY,
-      contrastText: "#fff",
+      contrastText: "#000",
+    },
+    background: {
+      color: BACKGROUND,
+      contrastText: "#000",
     },
     inversePrimary: {
       main: "#fff",

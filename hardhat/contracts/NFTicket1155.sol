@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract NFTicket1155 is ERC1155, Ownable {
-    constructor() ERC1155("") {}
     mapping(uint256 => address) public eventOwner;
     mapping(uint256 => Event ) eventInfo;
     mapping(uint256 => mapping(address => bool)) invited;
@@ -27,6 +26,8 @@ contract NFTicket1155 is ERC1155, Ownable {
     //each events tickets will have their own token ID
     //maps token ID to ticket holder to password
     //when you stake you also mint
+    constructor() ERC1155("") {}
+
     struct Event{
         uint256 id;
         uint256 supply;
@@ -70,11 +71,12 @@ contract NFTicket1155 is ERC1155, Ownable {
         eventID += 1;
     }
 
-    function createEvent(uint256 _supply, address[] memory _buyers, string memory newuri) 
+    function createEvent(uint256 _supply, address[] memory _buyers, string memory tokenURI) 
         public 
         onlyEventOwner(eventID)
     {
-        eventInfo[_id] = Event({
+        eventID += 1;
+        eventInfo[eventID] = Event({
             id: eventID,
             supply: _supply,
             hasWhitelist: true
@@ -84,13 +86,15 @@ contract NFTicket1155 is ERC1155, Ownable {
             invited[eventID][_buyers[i]] = true;
         }
 
-        _setURI(newuri);
-
-        tokenURIs[eventID] = newuri;
+        tokenURIs[eventID] = tokenURI;
 
         eventOwner[eventID] = msg.sender;
 
-        eventID += 1;
+       
+    }
+
+    function uri(uint256 id) public view override returns(string memory){
+        return tokenURIs[id];
     }
 
     function mint(uint256 id, uint256 amount, bytes memory data)
