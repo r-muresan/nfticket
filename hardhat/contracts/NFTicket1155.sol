@@ -54,8 +54,9 @@ contract NFTicket1155 is ERC1155, Ownable {
         _;
     }
 
-    modifier eventNotPassed(uint256 id){
-        require eventInfo[id].eventDate < block.timestamp, "event has passed");
+    modifier eventNotPassed(uint256 id) {
+        require(eventInfo[id].eventDate < block.timestamp, "event has passed");
+        _;
     }
 
 
@@ -135,14 +136,32 @@ contract NFTicket1155 is ERC1155, Ownable {
         claimed[_id][_user] = true;
     }
 
-    function getActiveEvents() public view returns (Event[]){
-        Event[] activeEvents;
+    function getActiveEvents() public view returns (Event[] memory){
+        uint256 count;
         for(uint256 i; i < eventID; i++){
             if (eventInfo[i].eventDate < block.timestamp){
-                activeEvents.push(eventInfo[i]);
+                count++;
+            }
+        }
+
+        Event[] memory activeEvents = new Event[](count);
+        uint256 index;
+
+        for(uint256 i; i < eventID; i++){
+            if (eventInfo[i].eventDate < block.timestamp){
+                activeEvents[index] = eventInfo[i];
+                index++;
             }
         }
         return activeEvents;
+    }
+
+    function getEventOwner(uint256 _id) public returns (address){
+        return eventOwner[_id];
+    }
+
+    function didUserBuy(uint256 _id, address user) public returns (bool){
+        return bought[_id][user];
     }
 
     function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
