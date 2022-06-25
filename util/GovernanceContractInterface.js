@@ -14,7 +14,7 @@ import { getUnixTime } from "date-fns";
 export const useGovernanceContract = () => {
   const eventId = getEventId();
   const [loading, setLoading] = useState(true);
-  const [proposals, setPropoals] = useState([]);
+  const [proposals, setProposals] = useState([]);
   const { setAlert } = useAlert();
 
   useEffect(() => {
@@ -30,8 +30,8 @@ export const useGovernanceContract = () => {
     await requestFunction({
       func: async () => {
         const proposals = await contract.getProposals(eventId);
-        console.log(proposals);
-        setPropoals(proposals);
+        
+        setProposals(proposals);
       },
       failMessage: () =>
         setAlert({ message: "Could not get proposals.", type: "error" }),

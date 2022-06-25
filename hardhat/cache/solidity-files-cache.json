@@ -1,15 +1,9 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-<<<<<<< HEAD
-    "C:\\Users\\bullm\\Documents\\Projects\\nfticket\\hardhat\\contracts\\Governance.sol": {
-      "lastModificationDate": 1656189725240,
-      "contentHash": "873342ebbde955e9086956db4246173b",
-=======
     "/Users/annamouland/Documents/NFTicket/nfticket/hardhat/contracts/Governance.sol": {
       "lastModificationDate": 1656193661708,
       "contentHash": "2c3cb31824fa888e5019578061b24809",
->>>>>>> 043b1b8132ff9caa86d540752fb4aa39c96706a6
       "sourceName": "hardhat/contracts/Governance.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -45,13 +39,8 @@
         "Governance"
       ]
     },
-<<<<<<< HEAD
-    "C:\\Users\\bullm\\Documents\\Projects\\nfticket\\node_modules\\@openzeppelin\\contracts\\access\\Ownable.sol": {
-      "lastModificationDate": 1656126014527,
-=======
     "/Users/annamouland/Documents/NFTicket/nfticket/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
       "lastModificationDate": 1656189848309,
->>>>>>> 043b1b8132ff9caa86d540752fb4aa39c96706a6
       "contentHash": "8398972af73b4e9e5ff3b31cad86234f",
       "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
       "solcConfig": {
@@ -87,15 +76,9 @@
         "Ownable"
       ]
     },
-<<<<<<< HEAD
-    "C:\\Users\\bullm\\Documents\\Projects\\nfticket\\hardhat\\contracts\\NFTicket1155.sol": {
-      "lastModificationDate": 1656183878371,
-      "contentHash": "09b9113784a707807703b4c0a4a7250d",
-=======
     "/Users/annamouland/Documents/NFTicket/nfticket/hardhat/contracts/NFTicket1155.sol": {
       "lastModificationDate": 1656185094500,
       "contentHash": "78d18c21f37cdb16155980916df74433",
->>>>>>> 043b1b8132ff9caa86d540752fb4aa39c96706a6
       "sourceName": "hardhat/contracts/NFTicket1155.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -132,13 +115,8 @@
         "NFTicket1155"
       ]
     },
-<<<<<<< HEAD
-    "C:\\Users\\bullm\\Documents\\Projects\\nfticket\\node_modules\\@openzeppelin\\contracts\\utils\\Context.sol": {
-      "lastModificationDate": 1656126012912,
-=======
     "/Users/annamouland/Documents/NFTicket/nfticket/node_modules/@openzeppelin/contracts/utils/Context.sol": {
       "lastModificationDate": 1656189847810,
->>>>>>> 043b1b8132ff9caa86d540752fb4aa39c96706a6
       "contentHash": "5f2c5c4b6af2dd4551027144797bc8be",
       "sourceName": "@openzeppelin/contracts/utils/Context.sol",
       "solcConfig": {
@@ -172,13 +150,8 @@
         "Context"
       ]
     },
-<<<<<<< HEAD
-    "C:\\Users\\bullm\\Documents\\Projects\\nfticket\\node_modules\\@openzeppelin\\contracts\\token\\ERC1155\\ERC1155.sol": {
-      "lastModificationDate": 1656126013222,
-=======
     "/Users/annamouland/Documents/NFTicket/nfticket/node_modules/@openzeppelin/contracts/token/ERC1155/ERC1155.sol": {
       "lastModificationDate": 1656189847888,
->>>>>>> 043b1b8132ff9caa86d540752fb4aa39c96706a6
       "contentHash": "792473360274d02eed0fe4c691d67d16",
       "sourceName": "@openzeppelin/contracts/token/ERC1155/ERC1155.sol",
       "solcConfig": {
@@ -219,13 +192,8 @@
         "ERC1155"
       ]
     },
-<<<<<<< HEAD
-    "C:\\Users\\bullm\\Documents\\Projects\\nfticket\\node_modules\\@openzeppelin\\contracts\\token\\ERC1155\\extensions\\ERC1155Supply.sol": {
-      "lastModificationDate": 1656126013359,
-=======
     "/Users/annamouland/Documents/NFTicket/nfticket/node_modules/@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol": {
       "lastModificationDate": 1656189847913,
->>>>>>> 043b1b8132ff9caa86d540752fb4aa39c96706a6
       "contentHash": "6a99607f60a77d468b7ed41303ea4a6c",
       "sourceName": "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol",
       "solcConfig": {
@@ -261,13 +229,8 @@
         "ERC1155Supply"
       ]
     },
-<<<<<<< HEAD
-    "C:\\Users\\bullm\\Documents\\Projects\\nfticket\\node_modules\\@openzeppelin\\contracts\\token\\ERC1155\\IERC1155.sol": {
-      "lastModificationDate": 1656126013997,
-=======
     "/Users/annamouland/Documents/NFTicket/nfticket/node_modules/@openzeppelin/contracts/token/ERC1155/IERC1155.sol": {
       "lastModificationDate": 1656189848184,
->>>>>>> 043b1b8132ff9caa86d540752fb4aa39c96706a6
       "contentHash": "59e1bc5713fdebc7f821dc52f4d3e0ef",
       "sourceName": "@openzeppelin/contracts/token/ERC1155/IERC1155.sol",
       "solcConfig": {
@@ -303,13 +266,8 @@
         "IERC1155"
       ]
     },
-<<<<<<< HEAD
-    "C:\\Users\\bullm\\Documents\\Projects\\nfticket\\node_modules\\@openzeppelin\\contracts\\token\\ERC1155\\IERC1155Receiver.sol": {
-      "lastModificationDate": 1656126014034,
-=======
     "/Users/annamouland/Documents/NFTicket/nfticket/node_modules/@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol": {
       "lastModificationDate": 1656189848194,
->>>>>>> 043b1b8132ff9caa86d540752fb4aa39c96706a6
       "contentHash": "9f8822b72fe2702979e40160cb6d9636",
       "sourceName": "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol",
       "solcConfig": {
@@ -345,13 +303,8 @@
         "IERC1155Receiver"
       ]
     },
-<<<<<<< HEAD
-    "C:\\Users\\bullm\\Documents\\Projects\\nfticket\\node_modules\\@openzeppelin\\contracts\\token\\ERC1155\\extensions\\IERC1155MetadataURI.sol": {
-      "lastModificationDate": 1656126014018,
-=======
     "/Users/annamouland/Documents/NFTicket/nfticket/node_modules/@openzeppelin/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol": {
       "lastModificationDate": 1656189848189,
->>>>>>> 043b1b8132ff9caa86d540752fb4aa39c96706a6
       "contentHash": "9148c2e10c4efb12c71a7f080da5559b",
       "sourceName": "@openzeppelin/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol",
       "solcConfig": {
@@ -387,13 +340,8 @@
         "IERC1155MetadataURI"
       ]
     },
-<<<<<<< HEAD
-    "C:\\Users\\bullm\\Documents\\Projects\\nfticket\\node_modules\\@openzeppelin\\contracts\\utils\\Address.sol": {
-      "lastModificationDate": 1656126012789,
-=======
     "/Users/annamouland/Documents/NFTicket/nfticket/node_modules/@openzeppelin/contracts/utils/Address.sol": {
       "lastModificationDate": 1656189847754,
->>>>>>> 043b1b8132ff9caa86d540752fb4aa39c96706a6
       "contentHash": "ad714a6368ee7d43cded6bbe8af0b155",
       "sourceName": "@openzeppelin/contracts/utils/Address.sol",
       "solcConfig": {
@@ -427,13 +375,8 @@
         "Address"
       ]
     },
-<<<<<<< HEAD
-    "C:\\Users\\bullm\\Documents\\Projects\\nfticket\\node_modules\\@openzeppelin\\contracts\\utils\\introspection\\ERC165.sol": {
-      "lastModificationDate": 1656126013386,
-=======
     "/Users/annamouland/Documents/NFTicket/nfticket/node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol": {
       "lastModificationDate": 1656189847918,
->>>>>>> 043b1b8132ff9caa86d540752fb4aa39c96706a6
       "contentHash": "0e7db055ce108f9da7bb6686a00287c0",
       "sourceName": "@openzeppelin/contracts/utils/introspection/ERC165.sol",
       "solcConfig": {
@@ -469,13 +412,8 @@
         "ERC165"
       ]
     },
-<<<<<<< HEAD
-    "C:\\Users\\bullm\\Documents\\Projects\\nfticket\\node_modules\\@openzeppelin\\contracts\\utils\\introspection\\IERC165.sol": {
-      "lastModificationDate": 1656126014083,
-=======
     "/Users/annamouland/Documents/NFTicket/nfticket/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
       "lastModificationDate": 1656189848211,
->>>>>>> 043b1b8132ff9caa86d540752fb4aa39c96706a6
       "contentHash": "03e6768535ac4da0e9756f1d8a4a018a",
       "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
       "solcConfig": {

@@ -7,7 +7,7 @@ const { ethers } = require("hardhat");
 
 async function main() {
   const Governance = await ethers.getContractFactory("Governance");
-  let contract = await Governance.deploy("0x547ecb2c8e7e590cdd731a762894e3135d8C896d");
+  let contract = await Governance.deploy("0xd979DBd0bDC32B1aE0524E88c959DE4dFCaeef08");
   console.log(contract);
   await contract.deployed();
   console.log(contract.address);
