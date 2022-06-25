@@ -28,11 +28,11 @@ contract Governance is Ownable{
         string proposing;
         string[] options;
         uint256 voteDelay;
+        uint256 creationTime;
         mapping(string => uint256) votes;
     }
 
     function submitProposal(uint256 _eventId, string memory _proposing, uint256 _voteDelay, string[] memory _options) public {
-
 
         require(nfticket.getEventOwner(_eventId) == msg.sender, "caller is not the event owner");
 
@@ -40,6 +40,7 @@ contract Governance is Ownable{
         proposalInfo[proposalID].proposing = _proposing;
         proposalInfo[proposalID].options= _options;
         proposalInfo[proposalID].voteDelay = _voteDelay;
+        proposalInfo[proposalID].creationTime = block.timestamp;
         for(uint256 i; i < _options.length; i++){
             proposalInfo[proposalID].votes[_options[i]] = 0;
         }
@@ -49,7 +50,9 @@ contract Governance is Ownable{
 
     function vote(uint256 _proposalId, string memory _option) public {
         uint256 _event = proposalToEvent[_proposalId];
-        require(proposalInfo[_proposalId].voteDelay > block.timestamp, "voting period closed");
+        uint256 _creationTime = proposalInfo[_proposalId].creationTime;
+        uint256 _voteDelay = proposalInfo[_proposalId].voteDelay;
+        require(_voteDelay + _creationTime > block.timestamp, "voting period closed");
         require(hasVoted[_proposalId][msg.sender] = false, "you have already voted");
         require(nfticket.didUserBuy(_event, msg.sender) == true, "you don't have a ticket for this event");
 
@@ -63,8 +66,10 @@ contract Governance is Ownable{
     function getVoteWinner(uint256 _proposalId) public returns(string memory){
         uint256 votes;
         string memory chosenOption;
-        Proposal storage _proposal = proposalInfo[_proposalId];
-        require(_proposal.voteDelay < block.timestamp, "voting period still open");
+        
+        uint256 _creationTime = proposalInfo[_proposalId].creationTime;
+        uint256 _voteDelay = proposalInfo[_proposalId].voteDelay;
+        require(_voteDelay + _creationTime < block.timestamp, "voting period still open");
 
         string[] memory props = _proposal.options;
         for(uint256 i; i < _proposal.options.length; i ++){
