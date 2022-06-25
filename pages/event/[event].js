@@ -5,12 +5,14 @@ import Button from "@mui/material/Button";
 import { getSize } from "../../util/theme";
 import { useSingleEvent } from "../../util/NFTContractInterface";
 import LoadingView from "../../components/LoadingView";
-import { getEventId } from "../../util/hooks";
-import { useRouter } from "next/router";
+import Image from "next/image";
+import { formatRelative } from "date-fns";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import PeopleIcon from "@mui/icons-material/People";
 
 const Event = () => {
   const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
-  const { loading, event } = useSingleEvent();
+  const { loading, event, totalSupply } = useSingleEvent();
 
   console.log(event);
 
@@ -30,9 +32,23 @@ const Event = () => {
       marginTop={10}
       marginBottom={5}
     >
-      <Box display="flex" maxWidth={1000} width="100%">
+      <Box
+        display="flex"
+        maxWidth={1000}
+        width="100%"
+        justifyContent="space-between"
+      >
         <Box>
-          {/* <Image src="" /> */}
+          <Box width={400} height={400} position="relative" marginBottom={4}>
+            {event.image && (
+              <Image
+                src={event.image}
+                layout="fill"
+                objectFit="cover"
+                className="rounded_md"
+              />
+            )}
+          </Box>
           <Typography
             variant="h2"
             fontSize={titleSize}
@@ -49,7 +65,40 @@ const Event = () => {
           >
             {event.description}
           </Typography>
+          <Box display="flex" gap={1} alignItems="center" marginTop={2}>
+            <PeopleIcon />
+            <Typography
+              variant="h2"
+              fontSize={textSize}
+              color="black"
+              fontWeight={400}
+            >
+              {`${totalSupply}/${event.maxParticipants}`}
+            </Typography>
+          </Box>
+          <Box display="flex" gap={1} alignItems="center" marginBottom={4}>
+            <AccessTimeIcon />
+            <Typography
+              variant="h2"
+              fontSize={textSize}
+              color="black"
+              fontWeight={400}
+            >
+              {formatRelative(event.eventDate, new Date())}
+            </Typography>
+          </Box>
+          <iframe
+            width={400}
+            height={400}
+            src={`http://maps.google.com/maps?&q=${event.location}&output=embed`}
+            frameborder="0"
+            scrolling="no"
+            marginheight="0"
+            marginwidth="0"
+            className="rounded_md"
+          />
         </Box>
+        <Box></Box>
       </Box>
     </Box>
   );

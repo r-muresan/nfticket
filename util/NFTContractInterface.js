@@ -111,6 +111,7 @@ export const useSingleEvent = () => {
   const eventId = getEventId();
   const [loading, setLoading] = useState(true);
   const [event, setEvent] = useState();
+  const [totalSupply, setTotalSupply] = useState();
   const { account, library } = useWeb3React();
   const { setAlert } = useAlert();
 
@@ -126,15 +127,24 @@ export const useSingleEvent = () => {
     await requestFunction({
       func: async () => {
         setLoading(true);
-        const event = await contract.getEvent(eventId ?? 1);
-        console.log(event);
+        const event = await contract.getEvent(eventId);
         setEvent(parseEvent(event));
       },
-      callback: () => setLoading(false),
       failMessage: () =>
         setAlert({ message: "Could not get event.", type: "error" }),
     });
+
+    await requestFunction({
+      func: async () => {
+        setLoading(true);
+        const supply = await contract.totalSupply(eventId);
+        setTotalSupply(parseInt(supply));
+      },
+      failMessage: () =>
+        setAlert({ message: "Could not get supply.", type: "error" }),
+    });
+    setLoading(false);
   };
 
-  return { loading, event };
+  return { loading, event, totalSupply };
 };
