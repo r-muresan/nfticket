@@ -20,41 +20,13 @@ const BaseWrapper = ({ children }) => {
       <ThemeProvider theme={theme}>
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link rel="manifest" href="manifest.json" />
-          <meta name="theme-color" content="#3500d3" />
+          <meta name="theme-color" content="#F96900" />
+          <link rel="icon" type="image/png" href="/icons/logo.png" />
           <meta
             name="description"
-            content="Coblox is First-Ever 3D, Cooperative NFT Builder. The community creates the NFTs and determines their price. Make your mark by placing a block."
+            content="Events tickets simplified with NFTs."
           />
-          <link
-            rel="apple-touch-icon"
-            sizes="180x180"
-            href="/icons/icon_apple.png"
-          />
-          <link
-            rel="icon"
-            type="image/png"
-            sizes="32x32"
-            href="/icons/icon32.png"
-          />
-          <link
-            rel="icon"
-            type="image/png"
-            sizes="16x16"
-            href="/icons/icon16.png"
-          />
-
-          <meta name="twitter:title" content="Coblox" />
-          <meta
-            name="twitter:description"
-            content="Coblox is First-Ever 3D, Cooperative NFT Builder. The community creates the NFTs and determines their price. Make your mark by placing a block."
-          />
-          <meta name="twitter:url" content="https://www.coblox.app/" />
-          <meta
-            name="twitter:card"
-            content="The First-Ever 3D, Cooperative NFT Builder"
-          />
-          <title>Coblox</title>
+          <title>NFTicket</title>
         </Head>
         {children}
       </ThemeProvider>

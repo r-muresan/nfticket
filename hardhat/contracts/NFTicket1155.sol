@@ -180,6 +180,26 @@ contract NFTicket1155 is ERC1155, Ownable, ERC1155Supply {
         return activeEvents;
     }
 
+    function getEventsByUser(address _user) public view returns (Event[] memory){
+        uint256 count;
+        for(uint256 i; i < eventID; i++){
+            if (balanceOf(_user, i) > 0){
+                count++;
+            }
+        }
+
+        Event[] memory activeEvents = new Event[](count);
+        uint256 index;
+
+        for(uint256 i; i < eventID; i++){
+            if (balanceOf(_user, i) > 0){
+                activeEvents[index] = eventInfo[i];
+                index++;
+            }
+        }
+        return activeEvents;
+    }
+
     function getEventOwner(uint256 _id) public view returns (address){
         return eventOwner[_id];
     }
@@ -240,6 +260,11 @@ contract NFTicket1155 is ERC1155, Ownable, ERC1155Supply {
         internal
         override(ERC1155, ERC1155Supply)
     {
+        for(uint256 i; i < ids.length; i++){
+            Event storage _event = eventInfo[ids[i]];
+            require(_event.eventDate > block.timestamp, "Cannot transfer after event started");
+        }
+
         super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
 }

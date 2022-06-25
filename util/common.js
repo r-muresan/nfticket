@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-// import BlockFactory from "/hardhat/contractArtifacts/hardhat/contracts/BlockFactory.sol/BlockFactory.json";
+import BlockFactory from "/hardhat/contractArtifacts/hardhat/contracts/NFTicket1155.sol/NFTicket1155.json";
 
 export const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -9,27 +9,32 @@ export const formatAddress = (address) => {
   );
 };
 
-// export const getContract = () => {
-//   const provider = new ethers.providers.getDefaultProvider(
-//     process.env.NEXT_PUBLIC_NETWORK_URL
-//   );
-//   const contract = new ethers.Contract(
-//     process.env.NEXT_PUBLIC_BLOCK_FACTORY,
-//     BlockFactory.abi,
-//     provider
-//   );
-//   return contract;
-// };
+export const getNFTContract = () => {
+  let provider;
+  if (window?.ethereum) {
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+  } else {
+    provider = new ethers.providers.getDefaultProvider(
+      process.env.NEXT_PUBLIC_NETWORK_URL
+    );
+  }
+  const contract = new ethers.Contract(
+    process.env.NEXT_PUBLIC_NFT_CONTRACT,
+    BlockFactory.abi,
+    provider
+  );
+  return contract;
+};
 
-// export const getContractSignature = async (signer) => {
-//   const contract = new ethers.Contract(
-//     process.env.NEXT_PUBLIC_BLOCK_FACTORY,
-//     BlockFactory.abi,
-//     signer
-//   );
+export const getNFTContractSignature = async (signer) => {
+  const contract = new ethers.Contract(
+    process.env.NEXT_PUBLIC_NFT_CONTRACT,
+    BlockFactory.abi,
+    signer
+  );
 
-//   return contract;
-// };
+  return contract;
+};
 
 export const requestFunction = async ({
   func,

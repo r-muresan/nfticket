@@ -5,19 +5,9 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 import HowToVoteIcon from "@mui/icons-material/HowToVote";
-import {
-  BACKGROUND,
-  COMMON,
-  UNCOMMON,
-  RARE,
-  EPIC,
-  LEGENDARY,
-  getSize,
-} from "../util/theme.js";
+import { BACKGROUND, getSize } from "../util/theme.js";
 import LoadingView from "../components/LoadingView.js";
 import Button from "@mui/material/Button";
-import ConstructionIcon from "@mui/icons-material/Construction";
-import TravelExploreIcon from "@mui/icons-material/TravelExplore";
 
 const LandingPage = () => {
   const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
@@ -101,8 +91,8 @@ const LandingPage = () => {
           </Typography>
 
           <Box display="flex" marginTop={2} gap={4}>
-            <Button variant="contained" size="large" href="/buy">
-              Buy Tickets
+            <Button variant="contained" size="large" href="/events">
+              Events
             </Button>
             <Button variant="contained" size="large" href="/host">
               Host an Event

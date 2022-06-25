@@ -117,7 +117,7 @@ const AppNav = ({ children }) => {
             }}
           >
             <ListItemIcon>
-              <Image src="/logos/metamask.png" width="30px" height="30px" />
+              <Image src="/icons/metamask.png" width="30px" height="30px" />
             </ListItemIcon>
             <ListItemText primary="Metamask" />
           </ListItemButton>
@@ -131,7 +131,7 @@ const AppNav = ({ children }) => {
             }}
           >
             <ListItemIcon>
-              <Image src="/logos/coinbase.png" width="30px" height="30px" />
+              <Image src="/icons/coinbase.png" width="30px" height="30px" />
             </ListItemIcon>
             <ListItemText primary="Coinbase Wallet" />
           </ListItemButton>
@@ -146,7 +146,7 @@ const AppNav = ({ children }) => {
           >
             <ListItemIcon>
               <Image
-                src="/logos/walletConnect.png"
+                src="/icons/walletConnect.png"
                 width="30px"
                 height="30px"
               />
@@ -179,9 +179,6 @@ const AppNav = ({ children }) => {
           </ListItemIcon>
           <ListItemText primary="Disconnect" />
         </ListItemButton>
-        <ListItemButton onClick={claimFunds}>
-          <ListItemText primary="Claim Funds" />
-        </ListItemButton>
       </List>
     </Box>
   );
@@ -198,25 +195,20 @@ const AppNav = ({ children }) => {
           }}
         >
           <Link href="/" color="inherit" underline="none">
-            <Box display="flex" alignItems="center">
-              <Box display="flex" alignItems="center" marginRight={0.25}>
-                <Image src="/logos/logo.svg" width="30px" height="30px" />
-              </Box>
-              <Typography variant="h5" color="white">
-                Coblox
-              </Typography>
-            </Box>
+            <Typography variant="h5" color="white" fontWeight={500}>
+              NFTicket
+            </Typography>
           </Link>
 
           <Box>
-            <Button href="/build" color="inversePrimary">
-              Build
+            <Button href="/events" color="inversePrimary">
+              Events
             </Button>
-            <Button href="/buy" color="inversePrimary">
-              Buy
+            <Button href="/your" color="inversePrimary">
+              Your Events
             </Button>
-            <Button href="/explore" color="inversePrimary">
-              Explore
+            <Button href="/host" color="inversePrimary">
+              Host
             </Button>
 
             <Button
@@ -225,7 +217,7 @@ const AppNav = ({ children }) => {
                 minHeight: 0,
                 minWidth: 0,
                 padding: "2px",
-                marginLeft: isWidescreen ? "25px" : "5px",
+                marginLeft: "5px",
               }}
               color="inversePrimary"
             >
@@ -238,7 +230,7 @@ const AppNav = ({ children }) => {
         {account ? drawerContentLoggedIn : defaultDrawerContent}
       </Drawer>
 
-      <Box top={10} overflow="auto">
+      <Box marginX={4} overflow="auto">
         {children}
       </Box>
     </Box>
