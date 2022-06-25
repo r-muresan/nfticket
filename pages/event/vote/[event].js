@@ -65,31 +65,89 @@ const isActive = (eventArray) => {
     return {activeProposals, inactiveProposals};
 }
 
-const Event = () => {
-  const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
-  const { loading, event } = useSingleEvent();
-  const proposals = [];
+const setProposals = (eventArray) => {
+    const {activeProposals, inactiveProposals} = isActive(eventArray);
+    for (let i = 0; i < activeProposals.length; i++) {
+        return(
+            <activeEvent event={activeProposals[i]} />
+        )
+    }
 
-  const activeProposals = proposals.filter()
+    for (let i = 0; i < inactiveProposals.length; i++) {
+        return(
+            <Box display="flex" flexDirection="column" maxWidth={1000} width="100%"></Box>
+        )
+    }
+}
 
-  if (loading) {
-    return (
-      <Box height="calc(100vh - 48px)">
-        <LoadingView />
-      </Box>
-    );
-  }
+const activeEvent = (event) => {
+    return(   
+    <Box>
+        <Typography
+            variant="h4"
+            size={titleSize}
+            color="black"
+            fontWeight={400}
+            marginTop={5}
+        >Active Proposals
+        </Typography>
+        <Box height={200} overflow={'auto'} sx={{border: 1}}>
+            <Box sx={{ border: 1 }} borderRadius={'16px'} 
+                height={150} p={2} boxShadow={4} 
+                bgcolor={SECONDARY}>
+                <Typography>Event: </Typography>
+                <Typography>Host: </Typography>
+                <Typography>Proposal:</Typography>
+                <CustomSelect> </CustomSelect>
+                <Button variant="contained">Vote</Button>
+            </Box>
+            <Box sx={{ border: 1 }} borderRadius={'16px'} 
+                height={150} p={2} boxShadow={4} 
+                bgcolor={SECONDARY}>
+                <Typography>Event: </Typography>
+                <Typography>Host: </Typography>
+                <Typography>Proposal:</Typography>
+                <CustomSelect> </CustomSelect>
+                <Button variant="contained">Vote</Button>
+            </Box>
+        </Box>
+    </Box> 
+    )
+}
 
-  return (
-    <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      marginTop={10}
-      marginBottom={5}
-      
-    >
-      <Box display="flex" flexDirection="column" maxWidth={1000} width="100%">
+const inactiveEvent = (event) => {
+    return(
+    <Box>
+         <Typography
+            variant="h4"
+            size={titleSize}
+            color="black"
+            fontWeight={400}
+            marginTop={5}
+        > Past Proposals </Typography>
+        <Box height={200} overflow={'auto'} sx={{border: 1}}>
+            <Box sx={{ border: 1 }} borderRadius={'16px'} height={150} p={2} boxShadow={4} bgcolor={SECONDARY}>
+                <Typography>Event: </Typography>
+                <Typography>Host: </Typography>
+                <Typography>Proposal:</Typography>
+                <Typography>Outcome:</Typography>
+            </Box>
+            <Box sx={{ border: 1 }} borderRadius={'16px'} height={150} p={2} boxShadow={4} bgcolor={SECONDARY}>
+                <Typography>Event: </Typography>
+                <Typography>Host: </Typography>
+                <Typography>Proposal:</Typography>
+                <Typography>Outcome:</Typography>
+            </Box>
+        </Box>
+    </Box>
+
+
+    )
+}
+
+const eventDetails = (event) => {
+    return(
+    <Box>
         <Typography
           variant="h4"
           size={titleSize}
@@ -106,58 +164,38 @@ const Event = () => {
             <Typography>Date</Typography>
             <Typography>Location</Typography>
         </Box>
-           
-            <Typography
-                variant="h4"
-                size={titleSize}
-                color="black"
-                fontWeight={400}
-                marginTop={5}
-            >Active Proposals
-            </Typography>
-        <Box height={200} overflow={'auto'} sx={{border: 1}}>
-            <Box sx={{ border: 1 }} borderRadius={'16px'} 
-                height={150} p={2} boxShadow={4} 
-                bgcolor={SECONDARY}>
-                <Typography>Event: </Typography>
-                <Typography>Host: </Typography>
-                <Typography>Proposal:</Typography>
-                <CustomSelect> </CustomSelect>
-                <Button variant="contained">Vote</Button>
-            </Box>
-            <Box sx={{ border: 1 }} borderRadius={'16px'} 
-                height={150} p={2} boxShadow={4} 
-                bgcolor={SECONDARY}>
-                <Typography>Event: </Typography>
-                <Typography>Host: </Typography>
-                <Typography>Proposal:</Typography>
-                <CustomSelect> </CustomSelect>
-                <Button variant="contained">Vote</Button>
-            </Box>
-        </Box>
-          
-            <Typography
-                variant="h4"
-                size={titleSize}
-                color="black"
-                fontWeight={400}
-                marginTop={5}
-            > Past Proposals </Typography>
-        <Box height={200} overflow={'auto'} sx={{border: 1}}>
-            <Box sx={{ border: 1 }} borderRadius={'16px'} height={150} p={2} boxShadow={4} bgcolor={SECONDARY}>
-                <Typography>Event: </Typography>
-                <Typography>Host: </Typography>
-                <Typography>Proposal:</Typography>
-                <Typography>Outcome:</Typography>
-            </Box>
-            <Box sx={{ border: 1 }} borderRadius={'16px'} height={150} p={2} boxShadow={4} bgcolor={SECONDARY}>
-                <Typography>Event: </Typography>
-                <Typography>Host: </Typography>
-                <Typography>Proposal:</Typography>
-                <Typography>Outcome:</Typography>
-            </Box>
-        </Box>
-        </Box>
+    </Box>
+    )
+}
+
+
+const Event = () => {
+  const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
+  const { loading, event } = useSingleEvent();
+  const proposals = [];
+  console.log(event);
+
+
+  if (loading) {
+    return (
+      <Box height="calc(100vh - 48px)">
+        <LoadingView />
+      </Box>
+    );
+  }
+
+  return (
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      marginTop={10}
+      marginBottom={5}  
+    >
+      <Box display="flex" flexDirection="column" maxWidth={1000} width="100%">
+    
+        
+    </Box>
     </Box>
   );
 };

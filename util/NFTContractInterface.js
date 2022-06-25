@@ -126,7 +126,8 @@ export const useSingleEvent = () => {
     await requestFunction({
       func: async () => {
         setLoading(true);
-        const event = await contract.getEvent(eventId);
+        const event = await contract.getEvent(eventId ?? 1);
+        console.log(event);
         setEvent(parseEvent(event));
       },
       callback: () => setLoading(false),
