@@ -3,11 +3,11 @@ const { ethers } = require("hardhat");
 // TO DEPLOY + VERIFY:
 // npx hardhat run hardhat/deployGov.js --network polygon
 // npx hardhat clean
-// npx hardhat verify addr --network polygon
+// npx hardhat verify --constructor-args argGov.js DEPLOYED_ADDRESS
 
 async function main() {
   const Governance = await ethers.getContractFactory("Governance");
-  let contract = await Governance.deploy("0xd979DBd0bDC32B1aE0524E88c959DE4dFCaeef08");
+  let contract = await Governance.deploy(process.env.NEXT_PUBLIC_NFT_CONTRACT);
   console.log(contract);
   await contract.deployed();
   console.log(contract.address);

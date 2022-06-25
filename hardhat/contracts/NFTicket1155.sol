@@ -142,15 +142,15 @@ contract NFTicket1155 is ERC1155, Ownable, ERC1155Supply {
 
         credits[id][msg.sender] = _event.price;
 
-        _mint(msg.sender, id, amount, data);
+        _mint(msg.sender, id, 1, "");
+    }
+
+    function getPassword(uint256 _id, address _user) public view returns(bytes32) {
+        return passwordHash[_id][_user];
     }
 
     function setPassword(uint256 _eventId, bytes32 _password) public onlyAttendee(_eventId) {
         passwordHash[_eventId][msg.sender] = _password;
-    }
-
-    function queryPassword(uint256 _id, address _user) public view onlyOwner returns(bytes32) {
-        return passwordHash[_id][_user];
     }
 
     function claimTicket(uint _id, address _user) public onlyOwner {

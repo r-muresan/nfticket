@@ -14,15 +14,16 @@ import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import SettingsIcon from "@mui/icons-material/Settings";
 import TextField from "@mui/material/TextField";
 import { useState } from "react";
+import randomWords from "random-words";
+import { SECONDARY } from "../../util/theme";
 
 const Event = () => {
   const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
-  const { loading, event, totalSupply } = useSingleEvent();
+  const { loading, event, totalSupply, isClaimed, claimTicket, setPassword } =
+    useSingleEvent();
   const { account } = useWeb3React();
 
-  console.log(event);
-
-  if (loading) {
+  if (loading || !event) {
     return (
       <Box height="calc(100vh - 48px)">
         <LoadingView />
@@ -34,12 +35,12 @@ const Event = () => {
     account === event.host ? (
       <AdminControl event={event} />
     ) : event.hasWhitelist && event.whitelisted.includes(account) ? (
-      <Box display="flex" alignItems="center" flexDirection="column">
-        <ConfirmationNumberIcon sx={{ fontSize: titleSize }} />
-        <Typography fontSize={subtitleSize} fontWeight={500}>
-          You are whitelisted, claim your ticket
-        </Typography>
-      </Box>
+      <ClaimTicket
+        event={event}
+        onClaim={claimTicket}
+        isClaimed={isClaimed}
+        setPassword={setPassword}
+      />
     ) : event.hasWhitelist && account ? (
       <Box display="flex" alignItems="center" flexDirection="column">
         <Typography fontSize={subtitleSize} fontWeight={500}>
@@ -47,12 +48,12 @@ const Event = () => {
         </Typography>
       </Box>
     ) : account ? (
-      <Box display="flex" alignItems="center" flexDirection="column">
-        <ConfirmationNumberIcon sx={{ fontSize: titleSize }} />
-        <Typography fontSize={subtitleSize} fontWeight={500}>
-          Claim your ticket
-        </Typography>
-      </Box>
+      <ClaimTicket
+        event={event}
+        onClaim={claimTicket}
+        isClaimed={isClaimed}
+        setPassword={setPassword}
+      />
     ) : (
       <Box display="flex" alignItems="center" flexDirection="column">
         <Typography fontSize={subtitleSize} fontWeight={500}>
@@ -117,7 +118,7 @@ const Event = () => {
               {`${totalSupply}/${event.maxParticipants}`}
             </Typography>
           </Box>
-          <Box display="flex" gap={1} alignItems="center" marginBottom={4}>
+          <Box display="flex" gap={1} alignItems="center">
             <AccessTimeIcon />
             <Typography
               variant="h2"
@@ -127,6 +128,11 @@ const Event = () => {
             >
               {formatRelative(event.eventDate, new Date())}
             </Typography>
+          </Box>
+          <Box marginY={2}>
+            <Button variant="contained" href={`/event/vote/1`}>
+              Governance
+            </Button>
           </Box>
           <iframe
             width={400}
@@ -138,7 +144,13 @@ const Event = () => {
             className="rounded_md"
           />
         </Box>
-        <Box width="100%" display="flex" justifyContent="center" mt={8}>
+        <Box
+          width="100%"
+          maxWidth={400}
+          display="flex"
+          justifyContent="center"
+          mt={8}
+        >
           {ControlPanel}
         </Box>
       </Box>
@@ -156,7 +168,7 @@ const AdminControl = ({ event }) => {
       <Typography fontSize={subtitleSize} fontWeight={500}>
         Configure your event
       </Typography>
-      {event.hasWhitelist && (
+      {event.hasWhitelist ? (
         <TextField
           label="Whitelisted addresses"
           value={whitelisted}
@@ -165,6 +177,58 @@ const AdminControl = ({ event }) => {
           maxRows={5}
           onChange={(e) => setWhitelisted(e.target.value)}
         />
+      ) : (
+        <Typography>No whitelist</Typography>
+      )}
+    </Box>
+  );
+};
+
+const ClaimTicket = ({ event, isClaimed, onClaim, setPassword }) => {
+  const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
+  const { account } = useWeb3React();
+
+  const randomWord = randomWords().toLowerCase();
+  const hash = sha256(randomWord + account);
+
+  const onSubmit = () => {};
+
+  return (
+    <Box display="flex" alignItems="center" flexDirection="column" gap={4}>
+      <Box display="flex" alignItems="center" flexDirection="column">
+        <ConfirmationNumberIcon sx={{ fontSize: titleSize }} />
+        <Typography fontSize={subtitleSize} fontWeight={500}>
+          Claim your ticket
+        </Typography>
+      </Box>
+      {isClaimed ? (
+        <Box display="flex" alignItems="center" flexDirection="column" gap={2}>
+          <Typography fontSize={textSize} fontWeight={300}>
+            Your secret word which will be used to claim your ticket:
+          </Typography>
+          <Box
+            bgcolor={SECONDARY}
+            paddingY={4}
+            borderRadius={2}
+            textAlign="center"
+            width="100%"
+          >
+            <Typography fontSize={subtitleSize} fontWeight={400}>
+              {randomWord}
+            </Typography>
+          </Box>
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={() => setPassword(hash)}
+          >
+            Set Secret Word
+          </Button>
+        </Box>
+      ) : (
+        <Button variant="contained" fullWidth onClick={onClaim}>
+          Claim Ticket
+        </Button>
       )}
     </Box>
   );

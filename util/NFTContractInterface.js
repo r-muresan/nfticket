@@ -9,6 +9,7 @@ import {
 import { getEventId, useAlert } from "./hooks";
 import { NFTStorage } from "nft.storage";
 import { getUnixTime } from "date-fns";
+import { ethers } from "ethers";
 
 const client = new NFTStorage({
   token: process.env.NEXT_PUBLIC_STORAGE_API_KEY,
@@ -107,12 +108,12 @@ export const useCreateEvent = () => {
   return { loading, createEvent };
 };
 
-
 export const useSingleEvent = () => {
   const eventId = getEventId();
   const [loading, setLoading] = useState(true);
   const [event, setEvent] = useState();
   const [totalSupply, setTotalSupply] = useState();
+  const [isClaimed, setIsClaimed] = useState(false);
   const { account, library } = useWeb3React();
   const { setAlert } = useAlert();
 
@@ -121,6 +122,12 @@ export const useSingleEvent = () => {
       getEvent();
     }
   }, [eventId]);
+
+  useEffect(() => {
+    if (account) {
+      checkClaimStatus();
+    }
+  }, [account]);
 
   const getEvent = async () => {
     const contract = getNFTContract();
@@ -147,5 +154,74 @@ export const useSingleEvent = () => {
     setLoading(false);
   };
 
-  return { loading, event, totalSupply };
+  const checkClaimStatus = async () => {
+    const contract = getNFTContract();
+
+    await requestFunction({
+      func: async () => {
+        setLoading(true);
+        const isClaimed = await contract.didUserBuy(eventId, account);
+        setIsClaimed(isClaimed);
+      },
+      failMessage: () =>
+        setAlert({ message: "Could not get claim status.", type: "error" }),
+    });
+    setLoading(false);
+  };
+
+  const claimTicket = async () => {
+    if (!account) {
+      setAlert({ message: "Please connect to a wallet", type: "error" });
+      return;
+    }
+
+    const contract = await getNFTContractSignature(library.getSigner());
+
+    await requestFunction({
+      func: async () => {
+        const tx = await contract.mint(eventId, 1, "0x", {
+          value: ethers.utils.parseEther(event.price.toString()),
+        });
+        setLoading(true);
+        setAlert({ message: "Please wait", type: "info" });
+        await tx.wait();
+      },
+      successMessage: () =>
+        setAlert({
+          message: `Ticket purchase successful`,
+          type: "success",
+        }),
+      failMessage: () =>
+        setAlert({ message: "Transaction failed", type: "error" }),
+    });
+    await checkClaimStatus();
+  };
+
+  const setPassword = async (hash) => {
+    if (!account) {
+      setAlert({ message: "Please connect to a wallet", type: "error" });
+      return;
+    }
+
+    const contract = await getNFTContractSignature(library.getSigner());
+
+    await requestFunction({
+      func: async () => {
+        const tx = await contract.setPassword(eventId, hash);
+        setLoading(true);
+        setAlert({ message: "Please wait", type: "info" });
+        await tx.wait();
+      },
+      successMessage: () =>
+        setAlert({
+          message: `Password set`,
+          type: "success",
+        }),
+      failMessage: () =>
+        setAlert({ message: "Transaction failed", type: "error" }),
+    });
+    setLoading(false);
+  };
+
+  return { loading, event, totalSupply, isClaimed, claimTicket, setPassword };
 };
