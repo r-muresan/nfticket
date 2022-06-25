@@ -24,6 +24,7 @@ import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
 import { getBlockFactorySignature } from "../util/common";
 import { useAlert } from "../util/hooks";
 import { Injected } from "../util/wallet/connections";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 
 const AppNav = ({ children }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -195,9 +196,12 @@ const AppNav = ({ children }) => {
           }}
         >
           <Link href="/" color="inherit" underline="none">
-            <Typography variant="h5" color="white" fontWeight={500}>
-              NFTicket
-            </Typography>
+            <Box display="flex" gap={0.5} alignItems="center">
+              <ConfirmationNumberIcon size="large" />
+              <Typography variant="h5" color="white" fontWeight={500}>
+                NFTicket
+              </Typography>
+            </Box>
           </Link>
 
           <Box>

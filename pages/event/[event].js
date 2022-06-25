@@ -9,10 +9,12 @@ import Image from "next/image";
 import { formatRelative } from "date-fns";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PeopleIcon from "@mui/icons-material/People";
+import { useWeb3React } from "@web3-react/core";
 
 const Event = () => {
   const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
   const { loading, event, totalSupply } = useSingleEvent();
+  const { account } = useWeb3React();
 
   console.log(event);
 
@@ -23,6 +25,39 @@ const Event = () => {
       </Box>
     );
   }
+
+  const ControlPanel =
+    account === event.host ? (
+      <Box>
+        <Typography fontSize={subtitleSize} fontWeight={500}>
+          Claim your ticket
+        </Typography>
+      </Box>
+    ) : event.hasWhitelist && event.whitelisted.includes(account) ? (
+      <Box>
+        <Typography fontSize={subtitleSize} fontWeight={500}>
+          You are whitelisted, claim your ticket
+        </Typography>
+      </Box>
+    ) : event.hasWhitelist && account ? (
+      <Box>
+        <Typography fontSize={subtitleSize} fontWeight={500}>
+          Sorry, you are not whitelisted
+        </Typography>
+      </Box>
+    ) : account ? (
+      <Box>
+        <Typography fontSize={subtitleSize} fontWeight={500}>
+          Claim your ticket
+        </Typography>
+      </Box>
+    ) : (
+      <Box>
+        <Typography fontSize={subtitleSize} fontWeight={500}>
+          Sign in to claim your ticket
+        </Typography>
+      </Box>
+    );
 
   return (
     <Box
@@ -37,6 +72,7 @@ const Event = () => {
         maxWidth={1000}
         width="100%"
         justifyContent="space-between"
+        gap={6}
       >
         <Box>
           <Box width={400} height={400} position="relative" marginBottom={4}>
@@ -91,14 +127,15 @@ const Event = () => {
             width={400}
             height={400}
             src={`http://maps.google.com/maps?&q=${event.location}&output=embed`}
-            frameborder="0"
-            scrolling="no"
-            marginheight="0"
-            marginwidth="0"
+            frameBorder="0"
+            marginHeight="0"
+            marginWidth="0"
             className="rounded_md"
           />
         </Box>
-        <Box></Box>
+        <Box width="100%" display="flex" justifyContent="center" mt={8}>
+          {ControlPanel}
+        </Box>
       </Box>
     </Box>
   );

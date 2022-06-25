@@ -63,6 +63,7 @@ export const parseEvent = (event) => {
     image: event.image.replace("ipfs://", "https://gateway.pinata.cloud/ipfs/"),
     whitelisted: event.whitelisted,
     maxParticipants: parseInt(event.supply),
+    hasWhitelist: event.hasWhitelist,
     price: parseInt(event.price),
     link: event.link,
     host: event.host,
