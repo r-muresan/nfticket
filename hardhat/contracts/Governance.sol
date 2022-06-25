@@ -75,5 +75,4 @@ contract Governance is Ownable{
         }
         return chosenOption;
     }
-
 }
