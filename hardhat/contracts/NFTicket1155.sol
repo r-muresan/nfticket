@@ -7,11 +7,17 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract NFTicket1155 is ERC1155, Ownable {
     mapping(uint256 => address) public eventOwner;
     mapping(uint256 => Event ) eventInfo;
+    mapping(uint256 => address[]) buyers;
+    //tells us all addrs that bought a ticket for that event
     mapping(uint256 => mapping(address => bool)) invited;
     mapping(uint256 => mapping(address => bytes32)) passwords; 
     mapping(uint256 => mapping(address => bool)) claimed; //one ticket per addr
     mapping(uint256 => mapping(address => bool)) public bought;
     mapping(uint256 => string) tokenURIs; 
+    mapping(uint256 => uint256) eventEscrow;
+    mapping(uint256 => mapping(address => uint256)) credits;
+    mapping(uint256 => uint256) votesForRefund;
+    //event id -> amt in escrow
     uint256 internal eventID;
 
     //every nft is the same so no need to redeploy contract for every single token minted
@@ -34,6 +40,8 @@ contract NFTicket1155 is ERC1155, Ownable {
         uint256 supply;
         uint256 eventDate;
         bool hasWhitelist;
+        uint256 price;
+        string applicationLink;
 
         //if there is a whitelist, they can only Mint if theyre on the list
         //if there is not a whitelist, anyone can mint
@@ -59,10 +67,14 @@ contract NFTicket1155 is ERC1155, Ownable {
         _;
     }
 
+    modifier onlyAttendee(uint256 id) {
+        //event id --> buyer addr --> bool
+        require(bought[id][msg.sender] == true, "you did not attend this event");
+        _;
+    }
 
-    //
-
-    function createEvent(uint256 _supply, uint256 _eventDate, string memory newuri) 
+    function createEvent(uint256 _supply, uint256 _eventDate, string memory newuri, uint256 _price,
+        string memory _applicationLink) 
         public 
         onlyEventOwner(eventID)
     {
@@ -74,7 +86,9 @@ contract NFTicket1155 is ERC1155, Ownable {
             id: eventID,
             supply: _supply,
             eventDate: _eventDate,
-            hasWhitelist: false
+            hasWhitelist: false,
+            price: _price,
+            applicationLink: _applicationLink
         });
 
         tokenURIs[eventID] = newuri;
@@ -82,7 +96,8 @@ contract NFTicket1155 is ERC1155, Ownable {
         eventOwner[eventID] = msg.sender;  
     }
 
-    function createEvent(uint256 _supply, uint256 _eventDate, address[] memory _buyers, string memory tokenURI) 
+    function createEvent(uint256 _supply, uint256 _eventDate, address[] memory _buyers, 
+        string memory tokenURI, uint256 _price, string memory _applicationLink) 
         public 
         onlyEventOwner(eventID)
     {
@@ -94,7 +109,9 @@ contract NFTicket1155 is ERC1155, Ownable {
             id: eventID,
             supply: _supply,
             eventDate: _eventDate,
-            hasWhitelist: true
+            hasWhitelist: true,
+            price: _price,
+            applicationLink: _applicationLink
         });
 
         for(uint256 i; i < _buyers.length; i++){
@@ -104,8 +121,6 @@ contract NFTicket1155 is ERC1155, Ownable {
         tokenURIs[eventID] = tokenURI;
 
         eventOwner[eventID] = msg.sender;
-
-       
     }
 
     function uri(uint256 id) public view override returns(string memory){
@@ -114,6 +129,7 @@ contract NFTicket1155 is ERC1155, Ownable {
 
     function mint(uint256 id, uint256 amount, bytes memory data)
         public
+        payable
         onlyNewBuyer(id)
         eventNotPassed(id)
     {
@@ -121,8 +137,15 @@ contract NFTicket1155 is ERC1155, Ownable {
         if (_event.hasWhitelist){
             require(invited[id][msg.sender] == true, "you are not invited to this event");
         }   
+        require(msg.value == _event.price, "incorrect price sent");
+
+        eventEscrow[id] += msg.value;
 
         bought[id][msg.sender] == true; 
+
+        buyers[id].push(msg.sender);
+
+        credits[id][msg.sender] = _event.price;
 
         _mint(msg.sender, id, amount, data);
     }
@@ -156,12 +179,63 @@ contract NFTicket1155 is ERC1155, Ownable {
         return activeEvents;
     }
 
-    function getEventOwner(uint256 _id) public returns (address){
+    function getEventOwner(uint256 _id) public view returns (address){
         return eventOwner[_id];
     }
 
-    function didUserBuy(uint256 _id, address user) public returns (bool){
+    function didUserBuy(uint256 _id, address user) public view returns (bool){
         return bought[_id][user];
+    }
+
+    function allowDepositPull(uint256 _eventId) public onlyOwner {
+
+        Event storage _event = eventInfo[_eventId];
+
+        address[] memory _buyers = buyers[_eventId];
+
+        for(uint256 i; i < _buyers.length; i++){
+            address buyer = _buyers[i];
+            if(bought[_eventId][buyer] == true){
+                credits[_eventId][buyer] = _event.price;
+            }
+        }
+    }
+
+    function withdrawDeposit(uint256 _eventId) public onlyAttendee(_eventId) {
+
+        uint amount = credits[_eventId][msg.sender];
+
+        require(amount > 0, "amount may not be zero or less");
+        require(address(this).balance >= amount, "contract lacks funds");
+
+        credits[_eventId][msg.sender] = 0;
+
+        payable(msg.sender).transfer(amount);
+
+        eventEscrow[_eventId] -= eventInfo[_eventId].price;
+    }
+
+
+    function payEventOwner(uint256 _eventId) public onlyOwner returns(bool){
+        Event storage _event = eventInfo[_eventId];
+
+        require(_event.eventDate + 7 days < block.timestamp, "damage claim period not over yet");
+
+
+        uint256 val = eventEscrow[_eventId];
+        address eventOrg = eventOwner[_eventId];
+        (bool success, ) = eventOrg.call{value: val}("");
+        require(success, "transaction failed");
+        return true;
+    }
+
+    function voteOnComplaint(uint256 _eventId) public onlyAttendee(_eventId){
+        votesForRefund[_eventId] += 1;
+        uint256 percentage = (votesForRefund[_eventId]/buyers[_eventId].length)*100;
+        if(percentage >= 90) {
+            allowDepositPull(_eventId);
+            _burn(msg.sender, _eventId, balanceOf(msg.sender, _eventId));
+        }
     }
 
     function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
