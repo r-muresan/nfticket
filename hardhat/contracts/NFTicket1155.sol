@@ -6,13 +6,14 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract NFTicket1155 is ERC1155, Ownable {
     constructor() ERC1155("") {}
-    mapping(uint256 => address) eventOwner;
+    mapping(uint256 => address) public eventOwner;
     mapping(uint256 => Event ) eventInfo;
     mapping(uint256 => mapping(address => bool)) invited;
     mapping(uint256 => mapping(address => bytes32)) passwords; 
     mapping(uint256 => mapping(address => bool)) claimed; //one ticket per addr
     mapping(uint256 => mapping(address => bool)) public bought;
     mapping(uint256 => string) tokenURIs; 
+    uint256 internal eventID;
     //every nft is the same so no need to redeploy contract for every single token minted
     //ticketId => (buyer => buyer Amt);
     //if claimed setup is equivalent to balanceOf, then claimed is true
@@ -49,48 +50,52 @@ contract NFTicket1155 is ERC1155, Ownable {
         _;
     }
 
-    function createEvent(uint256 _id, uint256 _supply, string memory newuri) 
+    function createEvent(uint256 _supply, string memory newuri) 
         public 
-        onlyEventOwner(_id)
+        onlyEventOwner(eventID)
     {
 
-        eventInfo[_id] = Event({
-            id: _id,
+        eventInfo[eventID] = Event({
+            id: eventID,
             supply: _supply,
             hasWhitelist: false
         });
 
         _setURI(newuri);
 
-        tokenURIs[_id] = newuri;
+        tokenURIs[eventID] = newuri;
 
-        eventOwner[_id] = msg.sender;
+        eventOwner[eventID] = msg.sender;
+
+        eventID += 1;
     }
 
-    function createEvent(uint256 _id, uint256 _supply, address[] memory _buyers, string memory newuri) 
+    function createEvent(uint256 _supply, address[] memory _buyers, string memory newuri) 
         public 
-        onlyEventOwner(_id)
+        onlyEventOwner(eventID)
     {
         eventInfo[_id] = Event({
-            id: _id,
+            id: eventID,
             supply: _supply,
             hasWhitelist: true
         });
 
         for(uint256 i; i < _buyers.length; i++){
-            invited[_id][_buyers[i]] = true;
+            invited[eventID][_buyers[i]] = true;
         }
 
         _setURI(newuri);
 
-        tokenURIs[_id] = newuri;
+        tokenURIs[eventID] = newuri;
 
-        eventOwner[_id] = msg.sender;
+        eventOwner[eventID] = msg.sender;
+
+        eventID += 1;
     }
 
-    function mint(address account, uint256 id, uint256 amount, bytes memory data)
+    function mint(uint256 id, uint256 amount, bytes memory data)
         public
-        onlyNewBuyer(id)
+        onlyNewBuyer(eventID)
     {
         Event storage _event = eventInfo[id];
         if (_event.hasWhitelist){
@@ -99,7 +104,7 @@ contract NFTicket1155 is ERC1155, Ownable {
 
         bought[id][msg.sender] == true; 
 
-        _mint(account, id, amount, data);
+        _mint(msg.sender, id, amount, data);
     }
 
     function queryPassword(uint256 _id, address _user) public view onlyOwner returns(bytes32) {
