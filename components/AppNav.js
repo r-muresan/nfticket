@@ -21,16 +21,12 @@ import { formatAddress } from "../util/common";
 import Image from "next/image";
 import { networkParams, POLYGON_MUMBAI } from "../util/wallet/network";
 import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
-import { getBlockFactorySignature } from "../util/common";
-import { useAlert } from "../util/hooks";
-import { Injected } from "../util/wallet/connections";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 
 const AppNav = ({ children }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { textSize, subtitleSize, isWidescreen } = getSize();
-  const { activate, account, deactivate, library, active } = useWeb3React();
-  const { setAlert } = useAlert();
+  const { activate, account, deactivate, active } = useWeb3React();
 
   const DRAWER_WIDTH = 240;
 
@@ -76,84 +72,107 @@ const AppNav = ({ children }) => {
     }
   };
 
-  const claimFunds = async () => {
-    if (!account) {
-      setAlert({ message: "Connect a wallet", type: "error" });
-      return;
-    }
-    try {
-      const contract = await getBlockFactorySignature(library.getSigner());
-      const tx = await contract.claimFunds();
-      setAlert({ message: "Please wait", type: "info" });
-      await tx.wait();
-      setAlert({ message: "Funds Claimed", type: "success" });
-    } catch (err) {
-      console.log(err);
-      setAlert({
-        message: "Transaction failed",
-        type: "error",
-      });
-    }
-  };
-
   const defaultDrawerContent = (
     <Box width={DRAWER_WIDTH}>
       <List>
         <ListItem>
           <Box textAlign="center" width="100%">
-            <Typography fontSize={textSize}>Login</Typography>
-            <Typography fontSize={textSize - 5}>
-              Connect with a supported method
+            <Typography fontSize={textSize} fontWeight={500}>
+              Networks
             </Typography>
+            <Typography fontSize={textSize - 5}>Select a network</Typography>
           </Box>
         </ListItem>
         <List disablePadding>
           <ListItemButton
-            onClick={async () => {
-              await activate(connectors.injected);
-              setProvider("injected");
-              if (!account) {
-                await requestNetworkSwitch();
-              }
+            onClick={() => {
+              window.location.href = "https://nfticket.lol/events";
             }}
           >
             <ListItemIcon>
-              <Image src="/icons/metamask.png" width="30px" height="30px" />
+              <Image src="/icons/polygon.png" width="30px" height="30px" />
             </ListItemIcon>
-            <ListItemText primary="Metamask" />
+            <ListItemText primary="Polygon" />
           </ListItemButton>
           <ListItemButton
-            onClick={async () => {
-              await activate(connectors.coinbaseWallet);
-              setProvider("coinbaseWallet");
-              if (!account) {
-                await requestNetworkSwitch();
-              }
+            onClick={() => {
+              window.location.href = "https://skale.nfticket.lol/events";
             }}
           >
             <ListItemIcon>
-              <Image src="/icons/coinbase.png" width="30px" height="30px" />
+              <Image src="/icons/skale.png" width="30px" height="30px" />
             </ListItemIcon>
-            <ListItemText primary="Coinbase Wallet" />
+            <ListItemText primary="Skale" />
           </ListItemButton>
           <ListItemButton
-            onClick={async () => {
-              await activate(connectors.walletConnect);
-              setProvider("walletConnect");
-              if (!account) {
-                await requestNetworkSwitch();
-              }
+            onClick={() => {
+              window.location.href = "https://cronos.nfticket.lol/events";
             }}
           >
             <ListItemIcon>
-              <Image
-                src="/icons/walletConnect.png"
-                width="30px"
-                height="30px"
-              />
+              <Image src="/icons/cronos.png" width="30px" height="30px" />
             </ListItemIcon>
-            <ListItemText primary="Wallet Connect" />
+            <ListItemText primary="Cronos" />
           </ListItemButton>
+
+          <ListItem sx={{ marginTop: 2 }}>
+            <Box textAlign="center" width="100%">
+              <Typography fontSize={textSize} fontWeight={500}>
+                Login
+              </Typography>
+              <Typography fontSize={textSize - 5}>
+                Connect with a supported method
+              </Typography>
+            </Box>
+          </ListItem>
+          <List disablePadding>
+            <ListItemButton
+              onClick={async () => {
+                await activate(connectors.injected);
+                setProvider("injected");
+                if (!account) {
+                  await requestNetworkSwitch();
+                }
+              }}
+            >
+              <ListItemIcon>
+                <Image src="/icons/metamask.png" width="30px" height="30px" />
+              </ListItemIcon>
+              <ListItemText primary="Metamask" />
+            </ListItemButton>
+            <ListItemButton
+              onClick={async () => {
+                await activate(connectors.coinbaseWallet);
+                setProvider("coinbaseWallet");
+                if (!account) {
+                  await requestNetworkSwitch();
+                }
+              }}
+            >
+              <ListItemIcon>
+                <Image src="/icons/coinbase.png" width="30px" height="30px" />
+              </ListItemIcon>
+              <ListItemText primary="Coinbase Wallet" />
+            </ListItemButton>
+            <ListItemButton
+              onClick={async () => {
+                await activate(connectors.walletConnect);
+                setProvider("walletConnect");
+                if (!account) {
+                  await requestNetworkSwitch();
+                }
+              }}
+            >
+              <ListItemIcon>
+                <Image
+                  src="/icons/walletConnect.png"
+                  width="30px"
+                  height="30px"
+                />
+              </ListItemIcon>
+              <ListItemText primary="Wallet Connect" />
+            </ListItemButton>
+          </List>
         </List>
       </List>
     </Box>
@@ -209,7 +228,7 @@ const AppNav = ({ children }) => {
               Events
             </Button>
             <Button href="/yours" color="inversePrimary">
-              {isWidescreen ? "Your Events" : "Yours"}
+              {isWidescreen ? "Your Tickets" : "Yours"}
             </Button>
             <Button href="/host" color="inversePrimary">
               Host

@@ -12,6 +12,12 @@ export const formatAddress = (address) => {
   );
 };
 
+export const getENS = async (address) => {
+  const provider = new ethers.providers.getDefaultProvider();
+  const ens = await provider.lookupAddress(address);
+  return ens;
+};
+
 export const getNFTContract = () => {
   const provider = new ethers.providers.getDefaultProvider(
     process.env.NEXT_PUBLIC_NETWORK_URL
@@ -100,6 +106,4 @@ export const parseProposal = (proposal) => {
     creationTime: parseInt(proposal.creationTime),
     vote: proposal.votes,
   };
-}
-
-
+};
