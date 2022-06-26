@@ -7,6 +7,7 @@ import {
   GOVERNANCE_CONTRACT_ADDRESS,
   NFT_CONTRACT_ADDRESS,
   RPC_URL,
+  RPC_URL_WS,
 } from "./wallet/network";
 
 export const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
@@ -24,7 +25,7 @@ export const getENS = async (address) => {
 };
 
 export const getNFTContract = () => {
-  const provider = new ethers.providers.getDefaultProvider(RPC_URL);
+  const provider = new ethers.providers.WebSocketProvider(RPC_URL_WS);
 
   const contract = new ethers.Contract(
     NFT_CONTRACT_ADDRESS,
@@ -35,7 +36,7 @@ export const getNFTContract = () => {
 };
 
 export const getGovernanceContract = () => {
-  const provider = new ethers.providers.getDefaultProvider(RPC_URL);
+  const provider = new ethers.providers.WebSocketProvider(RPC_URL_WS);
 
   const contract = new ethers.Contract(
     GOVERNANCE_CONTRACT_ADDRESS,

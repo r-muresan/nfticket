@@ -18,6 +18,12 @@ module.exports = {
       gas: 2100000,
       gasPrice: 5000 * 1e9,
     },
+    skale: {
+      url: "https://hackathon.skalenodes.com/v1/downright-royal-saiph",
+      accounts: [process.env.PRIVATE_KEY],
+      gas: 200000,
+      gasPrice: 100000,
+    },
   },
   etherscan: {
     apiKey: process.env.POLYGONSCAN_API_KEY,
