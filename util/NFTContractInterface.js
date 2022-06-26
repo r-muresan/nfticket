@@ -119,11 +119,13 @@ export const useCreateEvent = () => {
         setAlert({ message: "Please wait", type: "info" });
         await tx.wait();
       },
-      successMessage: () =>
+      successMessage: () => {
         setAlert({
           message: `Event created`,
           type: "success",
-        }),
+        });
+        window.location.href = "/events";
+      },
       failMessage: () =>
         setAlert({ message: "Transaction failed", type: "error" }),
     });

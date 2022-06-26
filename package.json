@@ -1,5 +1,5 @@
 {
-  "name": "coblox",
+  "name": "nfticket",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -32,7 +32,7 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-qr-code": "^2.0.7",
-    "react-qr-reader": "^3.0.0-beta-1",
+    "react-qr-scanner": "^1.0.0-alpha.8",
     "web3-utils": "^1.7.3"
   },
   "devDependencies": {

@@ -1,41 +1,75 @@
-import Image from "next/image";
-import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import { useTheme } from "@mui/material/styles";
-import HowToVoteIcon from "@mui/icons-material/HowToVote";
 import { BACKGROUND, getSize, SECONDARY } from "../../../util/theme.js";
-import Button from "@mui/material/Button";
-import ConstructionIcon from "@mui/icons-material/Construction";
-import TravelExploreIcon from "@mui/icons-material/TravelExplore";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import CardActionArea from "@mui/material/CardActionArea";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import { formatDistance } from "date-fns";
-import PeopleIcon from "@mui/icons-material/People";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import Grid from "@mui/material/Grid";
-import QRCode from "react-qr-code";
 import { useWeb3React } from "@web3-react/core";
-import { useRouter } from "next/router.js";
-import TextField from "@mui/material/TextField";
 import LoadingView from "../../../components/LoadingView.js";
+import dynamic from "next/dynamic";
+import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
+import { getNFTContract, requestFunction } from "../../../util/common.js";
+import { getEventId, useAlert } from "../../../util/hooks.js";
+import sha256 from "crypto-js/sha256";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+
+const QrRead = dynamic(() => import("react-qr-scanner"), {
+  ssr: false,
+});
 
 const ScanPage = () => {
   const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
   const { account } = useWeb3React();
-  const router = useRouter();
-  const userAccount = account || router.query.account;
+  const eventId = getEventId();
+  const { setAlert } = useAlert();
 
-  const [password, setPassword] = useState("");
+  const [data, setData] = useState();
+  const [loading, setLoading] = useState(false);
+  const [authState, setAuthState] = useState();
 
-  const copyUrl = () => {
-    let url = window.location.href;
-    url += `?account=${userAccount}`;
-    navigator.clipboard.writeText(url);
+  const handleScan = (data) => {
+    if (data) {
+      setData(JSON.parse(data?.text));
+    }
+  };
+
+  const handleError = (err) => {
+    console.error(err);
+  };
+
+  useEffect(() => {
+    if (data) {
+      auth();
+    }
+  }, [data]);
+
+  const auth = async () => {
+    console.log(data);
+    if (!data.password || !data.account) {
+      setAuthState("fail");
+      return;
+    }
+
+    const hash = sha256(data.account + data.password);
+    const buffer = Buffer.from(hash.toString(), "hex");
+    const bytes = new Uint8Array(buffer);
+    const hexHash = toHexString(bytes);
+
+    const contract = getNFTContract();
+
+    await requestFunction({
+      func: async () => {
+        setLoading(true);
+        const password = await contract.getPassword(eventId, data.account);
+        if (password === hexHash) {
+          setAuthState("success");
+        } else {
+          setAuthState("fail");
+        }
+      },
+      failMessage: () =>
+        setAlert({ message: "Failed to fetch", type: "error" }),
+    });
+
+    setLoading(false);
   };
 
   return (
@@ -46,13 +80,7 @@ const ScanPage = () => {
       marginTop={10}
       marginBottom={5}
     >
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        width={300}
-        gap={4}
-      >
+      <Box display="flex" flexDirection="column" alignItems="center">
         <Box textAlign="center">
           <Typography
             variant="h2"
@@ -60,42 +88,48 @@ const ScanPage = () => {
             color="black"
             fontWeight={400}
           >
-            Your Ticket
+            Scan Ticket
           </Typography>
           <Typography variant="h2" fontSize={textSize} color="black">
-            Present this to the event
+            Scan a ticket to check elgibility
           </Typography>
         </Box>
-        <Box display="flex" alignItems="center" justifyContent="center">
-          <Box padding={4} borderRadius={8} bgcolor={SECONDARY}>
-            {userAccount ? (
-              <QRCode
-                width={500}
-                height={500}
-                value={JSON.stringify({
-                  account: userAccount,
-                  password,
-                })}
-              />
-            ) : (
-              <LoadingView />
-            )}
-          </Box>
-        </Box>
-        <Box display="flex" flexDirection="column" gap={1} width="100%">
-          <TextField
-            label="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            fullWidth
+        <Box display="flex" alignItems="center" justifyContent="center" mt={4}>
+          <QrRead
+            onError={handleError}
+            onScan={handleScan}
+            style={{ height: "100%", width: "100%" }}
           />
-          <Button variant="contained" onClick={copyUrl}>
-            Copy URL
-          </Button>
+          <Box position="absolute">
+            {authState === "fail" ? (
+              <Box display="flex" flexDirection="column" alignItems="center">
+                <DoNotDisturbOnIcon
+                  color="error"
+                  sx={{ fontSize: titleSize * 3 }}
+                />
+              </Box>
+            ) : authState === "success" ? (
+              <Box display="flex" flexDirection="column" alignItems="center">
+                <CheckCircleIcon
+                  color="success"
+                  sx={{ fontSize: titleSize * 3 }}
+                />
+              </Box>
+            ) : null}
+          </Box>
         </Box>
       </Box>
     </Box>
   );
 };
+
+function toHexString(byteArray) {
+  return (
+    "0x" +
+    Array.from(byteArray, function (byte) {
+      return ("0" + (byte & 0xff).toString(16)).slice(-2);
+    }).join("")
+  );
+}
 
 export default ScanPage;
