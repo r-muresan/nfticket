@@ -36,9 +36,7 @@ contract Governance is Ownable{
     }
 
     function submitProposal(uint256 _eventId, string memory _proposing, uint256 _voteDelay, string[] memory _options) public {
-
         require(nfticket.getEventOwner(_eventId) == msg.sender, "caller is not the event owner");
-
         uint256[] memory _votes = new uint256[](_options.length);
         proposalInfo[proposalID].id = _eventId;
         proposalInfo[proposalID].proposing = _proposing;
@@ -58,8 +56,6 @@ contract Governance is Ownable{
         uint256 _creationTime = proposalInfo[_proposalId].creationTime;
         uint256 _voteDelay = proposalInfo[_proposalId].voteDelay;
         require(_voteDelay + _creationTime > block.timestamp, "voting period closed");
-        console.log(_voteDelay + _creationTime);
-        console.log(block.timestamp);
         require(hasVoted[_proposalId][msg.sender] == false, "you have already voted");
         require(nfticket.didUserBuy(_event, msg.sender) == true, "you don't have a ticket for this event");
 

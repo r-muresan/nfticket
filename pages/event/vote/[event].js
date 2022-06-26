@@ -59,6 +59,7 @@ function CustomSelect({ key }) {
 }
 
 const IsActive = (eventArray) => {
+  console.log("eventArryay", eventArray);
   const activeProposals = eventArray.filter(
     (proposal) => proposal.voteDelay + proposal.creationTime < Date.now()
   );
@@ -66,7 +67,7 @@ const IsActive = (eventArray) => {
   const inactiveProposals = eventArray.filter(
     (proposal) => proposal.voteDelay + proposal.creationTime > Date.now()
   );
-  return { activeProposals, inactiveProposals };
+  return { activeProposals: [], inactiveProposals };
 };
 
 const SetProposals = (eventArray) => {
@@ -90,8 +91,6 @@ const SetProposals = (eventArray) => {
 const Active = ({ proposal }) => {
   return (
     <li>
-      {" "}
-      <Box height={200} overflow={"auto"} sx={{ border: 1 }}>
         <Box
           sx={{ border: 1 }}
           borderRadius={"16px"}
@@ -104,52 +103,41 @@ const Active = ({ proposal }) => {
           <CustomSelect> </CustomSelect>
           <Button variant="contained">Vote</Button>
         </Box>
-        <Box
-          sx={{ border: 1 }}
-          borderRadius={"16px"}
-          height={150}
-          p={2}
-          boxShadow={4}
-          bgcolor={SECONDARY}
-        >
-          <Typography>Proposal: {proposal.proposing}</Typography>
-          <CustomSelect> </CustomSelect>
-          <Button variant="contained">Vote</Button>
-        </Box>
-      </Box>
     </li>
   );
 };
 const ActiveProposal = ({ activeProposals }) => {
+  console.log("active proposals", activeProposals);
   return (
     <Box>
       <Typography variant="h4" color="black" fontWeight={400} marginTop={5}>
         Active Proposals
       </Typography>
+      <Box height={200} overflow={"auto"} sx={{ border: 1 }}>
       <ul>
         {activeProposals.map((proposal, index) => (
           <Active proposal={proposal} key={index} />
         ))}
       </ul>
+      </Box>
     </Box>
   );
 };
 
 const Inactive = ({ proposal }) => {
+  console.log
   return (
     <li>
-      <Box height={200} overflow={"auto"} sx={{ border: 1 }}>
-        <Box
-          sx={{ border: 1 }}
-          borderRadius={"16px"}
-          height={150}
-          p={2}
-          boxShadow={4}
-          bgcolor={SECONDARY}
-        >
-          <Typography>Proposal: {proposal.proposing}</Typography>
-          <Typography>Outcome:</Typography>
-        </Box>
+      <Box
+        sx={{ border: 1 }}
+        borderRadius={"16px"}
+        height={150}
+        p={2}
+        boxShadow={4}
+        bgcolor={SECONDARY}
+      >
+        <Typography>Proposal: {proposal.proposing}</Typography>
+        <Typography>Outcome:</Typography>
       </Box>
     </li>
   );
@@ -161,16 +149,19 @@ const InactiveProposal = ({ inactiveProposals }) => {
       <Typography variant="h4" color="black" fontWeight={400} marginTop={5}>
         Inactive Proposals
       </Typography>
+      <Box height={200} overflow={"auto"} sx={{ border: 1 }}>
       <ul>
         {inactiveProposals.map((proposal, index) => (
           <Inactive proposal={proposal} key={index} />
         ))}
       </ul>
+      </Box>
     </Box>
   );
 };
 
 const EventDetails = ({ event }) => {
+  console.log("EVENT", event);
   return (
     <Box>
       <Typography variant="h4" color="black" fontWeight={400} marginTop={5}>
@@ -199,9 +190,13 @@ const EventDetails = ({ event }) => {
 const Event = () => {
   const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
   const { loading, event } = useSingleEvent();
-  const { loading: loadingProposals, proposals } = useGovernanceContract();
+  const {
+    loading: loadingProposals,
+    proposals,
+    addProposal,
+  } = useGovernanceContract();
 
-  if (loading) {
+  if (loading || loadingProposals) {
     return (
       <Box height="calc(100vh - 48px)">
         <LoadingView />
@@ -217,14 +212,16 @@ const Event = () => {
       marginTop={10}
       marginBottom={5}
     >
+      <Button onClick={addProposal}>Hey</Button>
+
       <Box display="flex" flexDirection="column" maxWidth={1000} width="100%">
         <EventDetails event={event} />
 
-        <ActiveProposal event={IsActive(proposals).activeProposals} />
-        <Typography variant="h4" color="black" fontWeight={400} marginTop={5}>
-          Past Proposals
-        </Typography>
-        <InactiveProposal event={IsActive(proposals).inactiveProposals} />
+        <ActiveProposal activeProposals={IsActive(proposals).activeProposals} />
+      
+        <InactiveProposal
+          inactiveProposals={IsActive(proposals).inactiveProposals}
+        />
       </Box>
     </Box>
   );
