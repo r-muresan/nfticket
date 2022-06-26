@@ -1,13 +1,12 @@
 import Image from "next/image";
-import Link from "next/link";
-import React, { Suspense } from "react";
+import React from "react";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import { useTheme } from "@mui/material/styles";
 import HowToVoteIcon from "@mui/icons-material/HowToVote";
 import { BACKGROUND, getSize } from "../util/theme.js";
-import LoadingView from "../components/LoadingView.js";
 import Button from "@mui/material/Button";
+import AssuredWorkloadIcon from "@mui/icons-material/AssuredWorkload";
+import SellIcon from "@mui/icons-material/Sell";
 
 const LandingPage = () => {
   const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
@@ -41,13 +40,6 @@ const LandingPage = () => {
               alt="ogo"
               layout="fixed"
             />
-            {/* <Typography
-              fontSize={subtitleSize}
-              color="primary"
-              fontWeight={500}
-            >
-              NFTicket
-            </Typography> */}
           </Box>
         </Box>
       </Box>
@@ -117,22 +109,29 @@ const LandingPage = () => {
           >
             About NFTicket
           </Typography>
-          <Typography fontSize="inherit" fontWeight={300}>
-            The community creates the NFTs and sets the price of the NFTs. 100%
-            of the auction price is split between the builders of the NFT,
-            incentiving the community to participate, cooperate and make a
-            masterpeice.
+          <Typography fontSize="inherit" fontWeight={300} marginTop={3}>
+            We solve for double spending, coordination issues, and credible
+            identification by streamlining the ticketing process with NFTs.
+            On-chain governance and NFT-related rewards guarantee better
+            attendee and host experiences.
           </Typography>
         </Box>
       </Box>
-
       <Box
         display="flex"
         justifyContent="center"
         alignItems="center"
         height="70vh"
       >
-        <Box maxWidth="800px" textAlign="left" marginX={2} fontSize={textSize}>
+        <Box
+          maxWidth="800px"
+          textAlign="left"
+          marginX={2}
+          fontSize={textSize}
+          display="flex"
+          flexDirection="column"
+          gap={1}
+        >
           <Typography
             className="gradientText"
             fontSize={titleSize}
@@ -143,9 +142,16 @@ const LandingPage = () => {
             What makes us different
           </Typography>
           <UtilityCard
+            title="Ticket Resale done easy"
+            desc="You can sell your tickets to anyone, anywhere, and anytime; just like NFTs."
+            icon={<SellIcon sx={{ fontSize: titleSize }} color="dark" />}
+          />
+          <UtilityCard
             title="Governance"
             desc="Event participants get to vote on decisions proposed by event creators."
-            icon={<HowToVoteIcon sx={{ fontSize: titleSize }} color="dark" />}
+            icon={
+              <AssuredWorkloadIcon sx={{ fontSize: titleSize }} color="dark" />
+            }
           />
           <UtilityCard
             title="Zero Knowledge"

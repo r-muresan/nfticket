@@ -13,7 +13,7 @@ import { useWeb3React } from "@web3-react/core";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import SettingsIcon from "@mui/icons-material/Settings";
 import TextField from "@mui/material/TextField";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import randomWords from "random-words";
 import { SECONDARY } from "../../util/theme";
 import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
@@ -21,7 +21,7 @@ import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import LinkIcon from "@mui/icons-material/Link";
 import Link from "next/link";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { formatAddress } from "../../util/common";
+import { formatAddress, getENS } from "../../util/common";
 import { getEventId } from "../../util/hooks";
 
 const Event = () => {
@@ -37,6 +37,19 @@ const Event = () => {
   } = useSingleEvent();
   const { account } = useWeb3React();
   const eventId = getEventId();
+  const [ens, setEns] = useState("");
+
+  useEffect(() => {
+    if (event && !ens) {
+      getEns();
+    }
+  }, [event]);
+
+  const getEns = async () => {
+    const address = event.host;
+    const ens = await getENS(address);
+    setEns(ens);
+  };
 
   if (loading || !event) {
     return (
@@ -134,7 +147,7 @@ const Event = () => {
               color="black"
               fontWeight={400}
             >
-              {formatAddress(event.host)}
+              {ens || formatAddress(event.host)}
             </Typography>
           </Box>
           <Box display="flex" gap={1} alignItems="center">
@@ -178,9 +191,11 @@ const Event = () => {
             <Button variant="contained" href={`/event/vote/${eventId}`}>
               Governance
             </Button>
-            <Button variant="contained" href={`/event/scan/${eventId}`}>
-              Scan Ticket
-            </Button>
+            {account === event.host && (
+              <Button variant="contained" href={`/event/scan/${eventId}`}>
+                Scan Ticket
+              </Button>
+            )}
             {isClaimed && (
               <Button variant="contained" href={`/event/ticket/${eventId}`}>
                 Show Ticket
@@ -190,7 +205,7 @@ const Event = () => {
           <iframe
             width={400}
             height={400}
-            src={`http://maps.google.com/maps?&q=${event.location}&output=embed`}
+            src={`https://maps.google.com/maps?&q=${event.location}&output=embed`}
             frameBorder="0"
             marginHeight="0"
             marginWidth="0"

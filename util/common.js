@@ -3,6 +3,11 @@ import { ethers } from "ethers";
 
 import NFTicket1155 from "/hardhat/contractArtifacts/hardhat/contracts/NFTicket1155.sol/NFTicket1155.json";
 import Governance from "/hardhat/contractArtifacts/hardhat/contracts/Governance.sol/Governance.json";
+import {
+  GOVERNANCE_CONTRACT_ADDRESS,
+  NFT_CONTRACT_ADDRESS,
+  RPC_URL,
+} from "./wallet/network";
 
 export const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -12,13 +17,17 @@ export const formatAddress = (address) => {
   );
 };
 
+export const getENS = async (address) => {
+  const provider = new ethers.providers.getDefaultProvider();
+  const ens = await provider.lookupAddress(address);
+  return ens;
+};
+
 export const getNFTContract = () => {
-  const provider = new ethers.providers.getDefaultProvider(
-    process.env.NEXT_PUBLIC_NETWORK_URL
-  );
+  const provider = new ethers.providers.getDefaultProvider(RPC_URL);
 
   const contract = new ethers.Contract(
-    process.env.NEXT_PUBLIC_NFT_CONTRACT,
+    NFT_CONTRACT_ADDRESS,
     NFTicket1155.abi,
     provider
   );
@@ -26,12 +35,10 @@ export const getNFTContract = () => {
 };
 
 export const getGovernanceContract = () => {
-  const provider = new ethers.providers.getDefaultProvider(
-    process.env.NEXT_PUBLIC_NETWORK_URL
-  );
+  const provider = new ethers.providers.getDefaultProvider(RPC_URL);
 
   const contract = new ethers.Contract(
-    process.env.NEXT_PUBLIC_GOVERNANCE_CONTRACT,
+    GOVERNANCE_CONTRACT_ADDRESS,
     Governance.abi,
     provider
   );
@@ -40,7 +47,7 @@ export const getGovernanceContract = () => {
 
 export const getNFTContractSignature = async (signer) => {
   const contract = new ethers.Contract(
-    process.env.NEXT_PUBLIC_NFT_CONTRACT,
+    NFT_CONTRACT_ADDRESS,
     NFTicket1155.abi,
     signer
   );
@@ -50,7 +57,7 @@ export const getNFTContractSignature = async (signer) => {
 
 export const getGovernanceContractSignature = async (signer) => {
   const contract = new ethers.Contract(
-    process.env.NEXT_PUBLIC_GOVERNANCE_CONTRACT,
+    GOVERNANCE_CONTRACT_ADDRESS,
     Governance.abi,
     signer
   );
@@ -100,6 +107,4 @@ export const parseProposal = (proposal) => {
     creationTime: parseInt(proposal.creationTime),
     vote: proposal.votes,
   };
-}
-
-
+};

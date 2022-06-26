@@ -25,8 +25,6 @@ const BuyPage = () => {
   const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
   const { loading, events } = useMultiEvents();
 
-  console.log(events);
-
   if (loading) {
     return (
       <Box height="calc(100vh - 48px)">

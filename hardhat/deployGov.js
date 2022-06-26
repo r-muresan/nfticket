@@ -8,7 +8,7 @@ const { ethers } = require("hardhat");
 
 async function main() {
   const Governance = await ethers.getContractFactory("Governance");
-  let contract = await Governance.deploy(process.env.NEXT_PUBLIC_NFT_CONTRACT);
+  let contract = await Governance.deploy("");
   console.log(contract);
   await contract.deployed();
   console.log(contract.address);
