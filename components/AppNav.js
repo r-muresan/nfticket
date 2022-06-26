@@ -19,7 +19,7 @@ import { connectors } from "../util/wallet/connections";
 import { getSize } from "../util/theme";
 import { formatAddress } from "../util/common";
 import Image from "next/image";
-import { networkParams, POLYGON_MUMBAI } from "../util/wallet/network";
+import { networkParams, DEFAULT_CHAIN } from "../util/wallet/network";
 import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 
@@ -50,7 +50,7 @@ const AppNav = ({ children }) => {
   };
 
   const requestNetworkSwitch = async () => {
-    const chainId = POLYGON_MUMBAI.chainId;
+    const chainId = DEFAULT_CHAIN.chainId;
     const ethereum = window?.ethereum;
     if (!ethereum) return;
     try {
