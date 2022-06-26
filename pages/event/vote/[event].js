@@ -171,7 +171,7 @@ const EventDetails = ({ event }) => {
   return (
     <Box>
       <Typography variant="h4" color="black" fontWeight={400} marginTop={5}>
-        Event Details
+        Submit Proposal
       </Typography>
 
       <Box

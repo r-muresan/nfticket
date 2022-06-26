@@ -58,7 +58,7 @@ export const useGovernanceContract = () => {
       func: async () => {
         setLoading(true)
 
-        const newProposal = contract.submitProposal(5, "BOOBOOr", 1658811875, ["yes", "no"]);
+        const newProposal = contract.submitProposal(5, "Byiuy", 1656224435, ["yes", "no"]);
         //console.log("new proposal", newProposal);
       },
       failMessage: () =>
