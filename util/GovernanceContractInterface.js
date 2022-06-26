@@ -44,7 +44,7 @@ export const useGovernanceContract = () => {
     setLoading(false);
   };
 
-  const addProposal = async (proposal) => {
+  const addProposal = async (proposing, options, voteDelay) => {
     if (!account){
       setAlert ({message: "no account", type: "error"});
       return;
@@ -57,16 +57,36 @@ export const useGovernanceContract = () => {
     await requestFunction({
       func: async () => {
         setLoading(true)
-
-        const newProposal = contract.submitProposal(5, "Byiuy", 1656224435, ["yes", "no"]);
-        //console.log("new proposal", newProposal);
+        const tx = await contract.submitProposal(eventId, proposing, voteDelay, options);
+        await tx.wait();
       },
       failMessage: () =>
         setAlert({ message: "Could not submit proposal.", type: "error" }),
     })
-    await getProposals
+    await getProposals();
     setLoading(false)
   }
 
-  return { loading, proposals, addProposal };
+  const vote = async (proposalId, option) => {
+    if (!account){
+      setAlert ({message: "no account", type: "error"});
+      return;
+    }
+
+    const contract = await getGovernanceContractSignature(library.getSigner());
+   
+    await requestFunction({
+      func: async () => {
+        setLoading(true)
+        const tx = await contract.vote(proposalId, option);
+        await tx.wait();
+      },
+      failMessage: () =>
+        setAlert({ message: "Could not vote.", type: "error" }),
+    })
+    await getProposals();
+    setLoading(false)
+  }
+
+  return { loading, proposals, addProposal, vote };
 }

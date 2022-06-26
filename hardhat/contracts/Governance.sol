@@ -23,6 +23,7 @@ contract Governance is Ownable{
     uint256 proposalID;
 
     struct Proposal {
+        uint256 propID; //proposal id
         uint256 id;
         string proposing;
         string[] options;
@@ -39,6 +40,7 @@ contract Governance is Ownable{
 
         //require(nfticket.getEventOwner(_eventId) == msg.sender, "caller is not the event owner");
         uint256[] memory _votes = new uint256[](_options.length);
+        proposalInfo[proposalID].propID = proposalID;
         proposalInfo[proposalID].id = _eventId;
         proposalInfo[proposalID].proposing = _proposing;
         proposalInfo[proposalID].options= _options;
@@ -49,6 +51,7 @@ contract Governance is Ownable{
         proposalToEvent[proposalID] = _eventId;
         eventToProposal[_eventId].push(proposalID);
         numProposals[_eventId]++;
+        proposalID++;
     }
 
     function vote(uint256 _proposalId, string memory _option) public {

@@ -7,16 +7,27 @@ import { useSingleEvent } from "../../../util/NFTContractInterface";
 import LoadingView from "../../../components/LoadingView";
 import { useEffect, useRef, useState } from "react";
 import InputLabel from "@mui/material/InputLabel";
+import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import FormHelperText from "@mui/material/FormHelperText";
 import { useGovernanceContract } from "../../../util/GovernanceContractInterface";
 
-function CustomSelect({ key }) {
+function CustomSelect({ proposalId,  options, votes, onVote }) {
   const [score, setScore] = useState("");
   const inputComponent = useRef(null);
   const [position, setPosition] = useState(0);
+  const [scoreData, setScoreData] = useState(options);
+
+
+  const onSubmit = () => {
+    onVote(proposalId, score);
+  }
+
+  const handleChange = (event) => {
+    setScore(event.target.value);
+  };
 
   useEffect(() => {
     setPosition(
@@ -26,15 +37,13 @@ function CustomSelect({ key }) {
     );
   }, [inputComponent]);
 
-  const scoreData = ["100", "90", "80", "70", "60"];
 
-  const handleChange = (event) => {
-    setScore(event.target.value);
-  };
+ 
 
   return (
+    <Box>
     <FormControl sx={{ width: 200, marginRight: "20px" }}>
-      {/* Supplies text for label */}
+     
       {score ? <InputLabel id="custom-select-label">Score</InputLabel> : ""}
       <Select
         ref={inputComponent}
@@ -50,6 +59,7 @@ function CustomSelect({ key }) {
         }}
       >
         {/*Don't add a placeholder, instead use renderValue to control emptry value text */}
+
         {scoreData.map((scoreValue, index) => {
           return (
             <MenuItem value={scoreValue} key={index}>
@@ -59,46 +69,22 @@ function CustomSelect({ key }) {
         })}
       </Select>
     </FormControl>
+    <Button variant="contained" onClick={onSubmit}>Vote</Button>
+    </Box>
   );
 }
 
 const IsActive = (eventArray) => {
-  console.log("eventArray", eventArray);
-  console.log(
-    "total time",
-    eventArray[0].voteDelay + eventArray[0].creationTime
-  );
-  console.log("TIME NOW", Date.now() / 1000);
-
   const activeProposals = eventArray.filter(
-    (proposal) => proposal.voteDelay + proposal.creationTime > Date.now() / 1000
+    (proposal) => proposal.voteDelay + proposal.creationTime > (Date.now() / 1000)
   );
 
-  const inactiveProposals = eventArray.filter(
-    (proposal) => proposal.voteDelay + proposal.creationTime < Date.now() / 1000
-  );
-  return { activeProposals, inactiveProposals };
+  return { activeProposals };
 };
 
-const SetProposals = (eventArray) => {
-  const { activeProposals, inactiveProposals } = isActive(eventArray);
-  for (let i = 0; i < activeProposals.length; i++) {
-    return <activeEvent event={activeProposals[i]} />;
-  }
 
-  for (let i = 0; i < inactiveProposals.length; i++) {
-    return (
-      <Box
-        display="flex"
-        flexDirection="column"
-        maxWidth={1000}
-        width="100%"
-      ></Box>
-    );
-  }
-};
 
-const Active = ({ proposal }) => {
+const Active = ({ proposal, onVote }) => {
   return (
     <Box>
       <Box
@@ -110,64 +96,33 @@ const Active = ({ proposal }) => {
         bgcolor={SECONDARY}
       >
         <Typography>Proposal: {proposal.proposing}</Typography>
-        <CustomSelect> </CustomSelect>
-        <Button variant="contained">Vote</Button>
+        <CustomSelect proposalId = {proposal.id} options = {proposal.options} votes={proposal.votes} onVote={onVote}/> 
+      
       </Box>
     </Box>
   );
 };
-const ActiveProposal = ({ activeProposals }) => {
+const ActiveProposal = ({ activeProposals, onVote }) => {
   console.log("active proposals", activeProposals);
   return (
     <Box>
       <Typography variant="h4" color="black" fontWeight={400} marginTop={5}>
         Active Proposals
       </Typography>
-      <Box height={200} overflow={"auto"} sx={{ border: 1 }}>
+      <Box height={400} overflow={"auto"} sx={{ border: 1 }}>
         {activeProposals.map((proposal, index) => (
-          <Active proposal={proposal} key={index} />
+          <Active proposal={proposal} key={index} onVote={onVote} />
         ))}
       </Box>
     </Box>
   );
 };
 
-const Inactive = ({ proposal }) => {
-  console.log;
-  return (
-    <Box>
-      <Box
-        sx={{ border: 1 }}
-        borderRadius={"16px"}
-        height={150}
-        p={2}
-        boxShadow={4}
-        bgcolor={SECONDARY}
-      >
-        <Typography>Proposal: {proposal.proposing}</Typography>
-        <Typography>Outcome:</Typography>
-      </Box>
-    </Box>
-  );
-};
-
-const InactiveProposal = ({ inactiveProposals }) => {
-  return (
-    <Box>
-      <Typography variant="h4" color="black" fontWeight={400} marginTop={5}>
-        Inactive Proposals
-      </Typography>
-      <Box height={200} overflow={"auto"} sx={{ border: 1 }}>
-        {inactiveProposals.map((proposal, index) => (
-          <Inactive proposal={proposal} key={index} />
-        ))}
-      </Box>
-    </Box>
-  );
-};
-
-const EventDetails = ({ event }) => {
-  console.log("EVENT", event);
+const EventDetails = ({  addProposal }) => {
+  const[proposing, setProposition] = useState("");
+  const[options, setOptions] = useState([]);
+  const[voteDelay, setVoteDelay] = useState(0);
+  
   return (
     <Box>
       <Typography variant="h4" color="black" fontWeight={400} marginTop={5}>
@@ -181,13 +136,31 @@ const EventDetails = ({ event }) => {
         p={2}
         boxShadow={3}
         bgcolor={SECONDARY}
+        display="flex"
+        gap={2}
       >
-        <Typography marginBottom={1}>Event: {event.name} </Typography>
-        <Typography marginBottom={1}>Host: {event.host} </Typography>
-        <Typography marginBottom={1}>
-          Date: {event.eventDate.toString()}
-        </Typography>
-        <Typography>Location: {event.location}</Typography>
+      
+        <TextField
+          label="Proposal"
+          value={proposing}
+          onChange={(e) => setProposition(e.target.value)}
+        />
+        <TextField
+          label="Options"
+          value={options}
+          onChange={(e) => setOptions(e.target.value)}
+        />
+        <TextField
+          label="Vote Delay"
+          value={voteDelay}
+          onChange={(e) => setVoteDelay(e.target.value)}
+        />  
+        <Button onClick={() => addProposal(proposing, options.split(','), voteDelay)} variant="contained" style={{
+          maxWidth: "60px",
+          maxHeight: "30px",
+          minWidth: "70px",
+          minHeight: "35px"
+        }}>Submit</Button>
       </Box>
     </Box>
   );
@@ -200,6 +173,7 @@ const Event = () => {
     loading: loadingProposals,
     proposals,
     addProposal,
+    vote
   } = useGovernanceContract();
 
   if (loading || loadingProposals) {
@@ -210,7 +184,7 @@ const Event = () => {
     );
   }
 
-  console.log(proposals);
+  console.log(proposals, IsActive(proposals).activeProposals);
   return (
     <Box
       display="flex"
@@ -219,16 +193,13 @@ const Event = () => {
       marginTop={10}
       marginBottom={5}
     >
-      <Button onClick={addProposal}>Hey</Button>
+      
 
       <Box display="flex" flexDirection="column" maxWidth={1000} width="100%">
-        <EventDetails event={event} />
+        <EventDetails event={event} addProposal = {addProposal}/>
 
-        <ActiveProposal activeProposals={IsActive(proposals).activeProposals} />
-
-        <InactiveProposal
-          inactiveProposals={IsActive(proposals).inactiveProposals}
-        />
+        <ActiveProposal activeProposals={IsActive(proposals).activeProposals} onVote={vote} />
+     
       </Box>
     </Box>
   );
