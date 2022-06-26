@@ -31,11 +31,15 @@ contract Governance is Ownable{
         uint256[] votes;
     }
 
+    function setNFT(address _nfticket) public onlyOwner{
+        nfticket = NFTicket1155(_nfticket);
+    }
+
     function submitProposal(uint256 _eventId, string memory _proposing, uint256 _voteDelay, string[] memory _options) public {
 
         require(nfticket.getEventOwner(_eventId) == msg.sender, "caller is not the event owner");
 
-        uint256[] memory _votes;
+        uint256[] memory _votes = new uint256[](_options.length);
         proposalInfo[proposalID].id = _eventId;
         proposalInfo[proposalID].proposing = _proposing;
         proposalInfo[proposalID].options= _options;
@@ -49,11 +53,14 @@ contract Governance is Ownable{
     }
 
     function vote(uint256 _proposalId, string memory _option) public {
+        
         uint256 _event = proposalToEvent[_proposalId];
         uint256 _creationTime = proposalInfo[_proposalId].creationTime;
         uint256 _voteDelay = proposalInfo[_proposalId].voteDelay;
         require(_voteDelay + _creationTime > block.timestamp, "voting period closed");
-        require(hasVoted[_proposalId][msg.sender] = false, "you have already voted");
+        console.log(_voteDelay + _creationTime);
+        console.log(block.timestamp);
+        require(hasVoted[_proposalId][msg.sender] == false, "you have already voted");
         require(nfticket.didUserBuy(_event, msg.sender) == true, "you don't have a ticket for this event");
 
         Proposal memory _proposal = proposalInfo[_proposalId];
@@ -68,9 +75,10 @@ contract Governance is Ownable{
         _proposal.votes[index] += 1;
 
         hasVoted[_proposalId][msg.sender] = true;
+ 
     }
 
-    function getVoteWinner(uint256 _proposalId) public returns(string memory){
+    function getVoteWinner(uint256 _proposalId) public view returns(string memory){
         uint256 votes;
         string memory chosenOption;
 

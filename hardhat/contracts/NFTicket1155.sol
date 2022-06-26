@@ -119,7 +119,7 @@ contract NFTicket1155 is ERC1155, Ownable, ERC1155Supply {
         return tokenURIs[id];
     }
 
-    function mint(uint256 id, uint256 amount, bytes memory data)
+    function mint(uint256 id)
         public
         payable
         onlyNewBuyer(id)
