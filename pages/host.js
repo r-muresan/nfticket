@@ -128,8 +128,8 @@ const HostPage = () => {
             </Box>
 
             <Button
-              onClick={() =>
-                createEvent(
+              onClick={async () => {
+                await createEvent(
                   eventName,
                   eventDescription,
                   eventLocation,
@@ -138,9 +138,11 @@ const HostPage = () => {
                   maxParticipants,
                   isWhitelisted,
                   eventLink
-                )
-              }
+                );
+                window.location.href = "/events";
+              }}
               variant="contained"
+              disabled={loading}
             >
               Create Event
             </Button>

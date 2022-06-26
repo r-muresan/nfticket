@@ -13,7 +13,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import FormHelperText from "@mui/material/FormHelperText";
 import { useGovernanceContract } from "../../../util/GovernanceContractInterface";
 
-function CustomSelect({key}) {
+function CustomSelect({ key }) {
   const [score, setScore] = useState("");
   const inputComponent = useRef(null);
   const [position, setPosition] = useState(0);
@@ -58,12 +58,11 @@ function CustomSelect({key}) {
   );
 }
 
-const IsActive = (eventArray) => { 
-  
+const IsActive = (eventArray) => {
   const activeProposals = eventArray.filter(
     (proposal) => proposal.voteDelay + proposal.creationTime < Date.now()
   );
-  
+
   const inactiveProposals = eventArray.filter(
     (proposal) => proposal.voteDelay + proposal.creationTime > Date.now()
   );
@@ -88,55 +87,57 @@ const SetProposals = (eventArray) => {
   }
 };
 
-const Active = ({proposal}) => {
-  return(
-    <li> <Box height={200} overflow={"auto"} sx={{ border: 1 }}>
-    <Box
-      sx={{ border: 1 }}
-      borderRadius={"16px"}
-      height={150}
-      p={2}
-      boxShadow={4}
-      bgcolor={SECONDARY}
-    >
-      <Typography>Proposal: {proposal.proposing}</Typography>
-      <CustomSelect> </CustomSelect>
-      <Button variant="contained">Vote</Button>
-    </Box>
-    <Box
-      sx={{ border: 1 }}
-      borderRadius={"16px"}
-      height={150}
-      p={2}
-      boxShadow={4}
-      bgcolor={SECONDARY}
-    >
-      <Typography>Proposal: {proposal.proposing}</Typography>
-      <CustomSelect> </CustomSelect>
-      <Button variant="contained">Vote</Button>
-    </Box>
-  </Box></li>
-  )
-
-}
-const ActiveProposal = ({activeProposals}) => {
+const Active = ({ proposal }) => {
+  return (
+    <li>
+      {" "}
+      <Box height={200} overflow={"auto"} sx={{ border: 1 }}>
+        <Box
+          sx={{ border: 1 }}
+          borderRadius={"16px"}
+          height={150}
+          p={2}
+          boxShadow={4}
+          bgcolor={SECONDARY}
+        >
+          <Typography>Proposal: {proposal.proposing}</Typography>
+          <CustomSelect> </CustomSelect>
+          <Button variant="contained">Vote</Button>
+        </Box>
+        <Box
+          sx={{ border: 1 }}
+          borderRadius={"16px"}
+          height={150}
+          p={2}
+          boxShadow={4}
+          bgcolor={SECONDARY}
+        >
+          <Typography>Proposal: {proposal.proposing}</Typography>
+          <CustomSelect> </CustomSelect>
+          <Button variant="contained">Vote</Button>
+        </Box>
+      </Box>
+    </li>
+  );
+};
+const ActiveProposal = ({ activeProposals }) => {
   return (
     <Box>
       <Typography variant="h4" color="black" fontWeight={400} marginTop={5}>
         Active Proposals
       </Typography>
       <ul>
-        {activeProposals.map((proposal, index) => 
+        {activeProposals.map((proposal, index) => (
           <Active proposal={proposal} key={index} />
-        )}
-      </ul>      
+        ))}
+      </ul>
     </Box>
   );
 };
 
-const Inactive = ({proposal}) => {
-  return(
-    <li> 
+const Inactive = ({ proposal }) => {
+  return (
+    <li>
       <Box height={200} overflow={"auto"} sx={{ border: 1 }}>
         <Box
           sx={{ border: 1 }}
@@ -149,24 +150,23 @@ const Inactive = ({proposal}) => {
           <Typography>Proposal: {proposal.proposing}</Typography>
           <Typography>Outcome:</Typography>
         </Box>
-      </Box> 
-    </li> 
-  ) 
-}
+      </Box>
+    </li>
+  );
+};
 
-const InactiveProposal = ({inactiveProposals}) => {
+const InactiveProposal = ({ inactiveProposals }) => {
   return (
     <Box>
       <Typography variant="h4" color="black" fontWeight={400} marginTop={5}>
         Inactive Proposals
       </Typography>
       <ul>
-        {inactiveProposals.map((proposal, index) => 
+        {inactiveProposals.map((proposal, index) => (
           <Inactive proposal={proposal} key={index} />
-        )}
-      </ul>      
+        ))}
+      </ul>
     </Box>
-    
   );
 };
 
@@ -201,8 +201,6 @@ const Event = () => {
   const { loading, event } = useSingleEvent();
   const { loading: loadingProposals, proposals } = useGovernanceContract();
 
- 
-
   if (loading) {
     return (
       <Box height="calc(100vh - 48px)">
@@ -221,11 +219,10 @@ const Event = () => {
     >
       <Box display="flex" flexDirection="column" maxWidth={1000} width="100%">
         <EventDetails event={event} />
-        
 
         <ActiveProposal event={IsActive(proposals).activeProposals} />
         <Typography variant="h4" color="black" fontWeight={400} marginTop={5}>
-        Past Proposals
+          Past Proposals
         </Typography>
         <InactiveProposal event={IsActive(proposals).inactiveProposals} />
       </Box>

@@ -208,7 +208,7 @@ const AppNav = ({ children }) => {
             <Button href="/events" color="inversePrimary">
               Events
             </Button>
-            <Button href="/your" color="inversePrimary">
+            <Button href="/yours" color="inversePrimary">
               Your Events
             </Button>
             <Button href="/host" color="inversePrimary">

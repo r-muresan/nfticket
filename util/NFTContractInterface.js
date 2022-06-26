@@ -15,13 +15,23 @@ const client = new NFTStorage({
   token: process.env.NEXT_PUBLIC_STORAGE_API_KEY,
 });
 
-export const useMultiEvents = () => {
+export const useMultiEvents = (userOnly) => {
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState([]);
+  const { account } = useWeb3React();
+  const { setAlert } = useAlert();
 
   useEffect(() => {
-    getEvents();
+    if (!userOnly) {
+      getEvents();
+    }
   }, []);
+
+  useEffect(() => {
+    if (userOnly && account) {
+      getUserEvents();
+    }
+  }, [account]);
 
   const getEvents = async () => {
     const contract = getNFTContract();
@@ -30,6 +40,21 @@ export const useMultiEvents = () => {
       func: async () => {
         setLoading(true);
         const events = await contract.getActiveEvents();
+        setEvents(events.map((e) => parseEvent(e)));
+      },
+      callback: () => setLoading(false),
+      failMessage: () =>
+        setAlert({ message: "Could not get events", type: "error" }),
+    });
+  };
+
+  const getUserEvents = async (getEventsByUser) => {
+    const contract = getNFTContract();
+
+    await requestFunction({
+      func: async () => {
+        setLoading(true);
+        const events = await contract.getEventsByUser(account);
         setEvents(events.map((e) => parseEvent(e)));
       },
       callback: () => setLoading(false),
@@ -69,8 +94,9 @@ export const useCreateEvent = () => {
 
     await requestFunction({
       func: async () => {
+        setLoading(true);
         const metadata = await client.store({
-          name,
+          name: name + " Ticket",
           description,
           image,
         });
@@ -89,7 +115,6 @@ export const useCreateEvent = () => {
           0,
           eventLink
         );
-        setLoading(true);
 
         setAlert({ message: "Please wait", type: "info" });
         await tx.wait();
@@ -179,7 +204,7 @@ export const useSingleEvent = () => {
 
     await requestFunction({
       func: async () => {
-        const tx = await contract.mint(eventId, 1, "0x", {
+        const tx = await contract.mint(eventId, {
           value: ethers.utils.parseEther(event.price.toString()),
         });
         setLoading(true);
@@ -195,6 +220,32 @@ export const useSingleEvent = () => {
         setAlert({ message: "Transaction failed", type: "error" }),
     });
     await checkClaimStatus();
+  };
+
+  const addToWhitelist = async (addresses) => {
+    if (!account) {
+      setAlert({ message: "Please connect to a wallet", type: "error" });
+      return;
+    }
+
+    const contract = await getNFTContractSignature(library.getSigner());
+
+    await requestFunction({
+      func: async () => {
+        const tx = await contract.addToWhitelist(eventId, addresses);
+        setLoading(true);
+        setAlert({ message: "Please wait", type: "info" });
+        await tx.wait();
+      },
+      successMessage: () =>
+        setAlert({
+          message: `Addresses whitelisted`,
+          type: "success",
+        }),
+      failMessage: () =>
+        setAlert({ message: "Transaction failed", type: "error" }),
+    });
+    setLoading(false);
   };
 
   const setPassword = async (hash) => {
@@ -223,5 +274,13 @@ export const useSingleEvent = () => {
     setLoading(false);
   };
 
-  return { loading, event, totalSupply, isClaimed, claimTicket, setPassword };
+  return {
+    loading,
+    event,
+    totalSupply,
+    isClaimed,
+    claimTicket,
+    setPassword,
+    addToWhitelist,
+  };
 };

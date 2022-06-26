@@ -84,6 +84,8 @@ contract NFTicket1155 is ERC1155, Ownable, ERC1155Supply {
         uint256 _price, string memory _link) 
         public 
     {
+        eventID += 1;
+
         require(_eventDate > block.timestamp, "event must happen in the future");
 
         address[] memory users;
@@ -107,15 +109,18 @@ contract NFTicket1155 is ERC1155, Ownable, ERC1155Supply {
 
         eventOwner[eventID] = msg.sender;  
 
-        eventID += 1;
+       
     }
 
-    function setWhitelist(uint256 _eventId, address[] memory _whitelisted) public onlyEventOwner(_eventId){
+    function addToWhitelist(uint256 _eventId, address[] memory _whitelisted) public onlyEventOwner(_eventId){
         Event storage _event = eventInfo[_eventId];
-        _event.whitelisted = _whitelisted;
+        for(uint256 i = 0; i < _whitelisted.length; i++){
+            invited[_eventId][_whitelisted[i]] = true;
+            _event.whitelisted.push(_whitelisted[i]);
+        }
     }
 
-    function getURI(uint256 id) public view returns(string memory){
+    function uri(uint256 id) public view override returns(string memory){
         return tokenURIs[id];
     }
 
@@ -153,14 +158,14 @@ contract NFTicket1155 is ERC1155, Ownable, ERC1155Supply {
         passwordHash[_eventId][msg.sender] = _password;
     }
 
-    function claimTicket(uint _id, address _user) public onlyOwner {
+    function claimTicket(uint _id, address _user) public onlyEventOwner(_id) {
         require(claimed[_id][_user] == false, "ticket already claimed");
         claimed[_id][_user] = true;
     }
 
     function getActiveEvents() public view returns (Event[] memory){
         uint256 count;
-        for(uint256 i; i < eventID; i++){
+        for(uint256 i = 1; i <= eventID; i++){
             if (eventInfo[i].eventDate > block.timestamp){
                 count++;
             }
@@ -169,7 +174,7 @@ contract NFTicket1155 is ERC1155, Ownable, ERC1155Supply {
         Event[] memory activeEvents = new Event[](count);
         uint256 index;
 
-        for(uint256 i; i < eventID; i++){
+        for(uint256 i = 1; i <= eventID; i++){
             if (eventInfo[i].eventDate > block.timestamp){
                 activeEvents[index] = eventInfo[i];
                 index++;
@@ -180,7 +185,7 @@ contract NFTicket1155 is ERC1155, Ownable, ERC1155Supply {
 
     function getEventsByUser(address _user) public view returns (Event[] memory){
         uint256 count;
-        for(uint256 i; i < eventID; i++){
+        for(uint256 i = 1; i <= eventID; i++){
             if (balanceOf(_user, i) > 0){
                 count++;
             }
@@ -189,7 +194,7 @@ contract NFTicket1155 is ERC1155, Ownable, ERC1155Supply {
         Event[] memory activeEvents = new Event[](count);
         uint256 index;
 
-        for(uint256 i; i < eventID; i++){
+        for(uint256 i = 1; i <= eventID; i++){
             if (balanceOf(_user, i) > 0){
                 activeEvents[index] = eventInfo[i];
                 index++;

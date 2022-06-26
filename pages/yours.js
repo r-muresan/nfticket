@@ -20,10 +20,11 @@ import PeopleIcon from "@mui/icons-material/People";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useMultiEvents } from "../util/NFTContractInterface.js";
 import Grid from "@mui/material/Grid";
+import { EventCard } from "./events.js";
 
-const BuyPage = () => {
+const YourEventsPage = () => {
   const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
-  const { loading, events } = useMultiEvents();
+  const { loading, events } = useMultiEvents(true);
 
   console.log(events);
 
@@ -77,69 +78,4 @@ const BuyPage = () => {
   );
 };
 
-export const EventCard = ({
-  title,
-  desc,
-  image,
-  startTime,
-  eventId,
-  location,
-  maxParticipants,
-}) => {
-  const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
-
-  return (
-    <Card sx={{ backgroundColor: SECONDARY }}>
-      <CardActionArea href={eventId ? `/event/${eventId}` : undefined}>
-        <CardMedia
-          component="img"
-          height="300"
-          width="500"
-          sx={{ minWidth: "350px" }}
-          image={
-            image ||
-            "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg"
-          }
-        />
-
-        <CardContent>
-          <Box mb={2}>
-            <Box display="flex" justifyContent="space-between">
-              <Typography fontSize={textSize + 5} noWrap>
-                {title || "Event Name"}
-              </Typography>
-              {location && (
-                <Box display="flex" gap={1} alignItems="center">
-                  <LocationOnIcon />
-                  <Typography fontSize={textSize} noWrap>
-                    {location}
-                  </Typography>
-                </Box>
-              )}
-            </Box>
-
-            <Typography fontSize={textSize}>{desc}</Typography>
-          </Box>
-          <Box display="flex" justifyContent="space-between">
-            <Box display="flex" gap={1} alignItems="center">
-              <PeopleIcon />
-              <Typography fontSize={textSize}>
-                {`0/${maxParticipants}`}
-              </Typography>
-            </Box>
-            <Box display="flex" gap={1} alignItems="center">
-              <AccessTimeIcon />
-              <Typography fontSize={textSize}>
-                {formatDistance(startTime, new Date(), {
-                  addSuffix: true,
-                })}
-              </Typography>
-            </Box>
-          </Box>
-        </CardContent>
-      </CardActionArea>
-    </Card>
-  );
-};
-
-export default BuyPage;
+export default YourEventsPage;
