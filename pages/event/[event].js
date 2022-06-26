@@ -22,6 +22,7 @@ import LinkIcon from "@mui/icons-material/Link";
 import Link from "next/link";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { formatAddress } from "../../util/common";
+import { getEventId } from "../../util/hooks";
 
 const Event = () => {
   const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
@@ -35,6 +36,7 @@ const Event = () => {
     addToWhitelist,
   } = useSingleEvent();
   const { account } = useWeb3React();
+  const eventId = getEventId();
 
   if (loading || !event) {
     return (
@@ -172,10 +174,18 @@ const Event = () => {
               </Link>
             </Box>
           )}
-          <Box marginY={2}>
-            <Button variant="contained" href={`/event/vote/1`}>
+          <Box marginY={2} width="100%" display="flex" gap={2}>
+            <Button variant="contained" href={`/event/vote/${eventId}`}>
               Governance
             </Button>
+            <Button variant="contained" href={`/event/scan/${eventId}`}>
+              Scan Ticket
+            </Button>
+            {isClaimed && (
+              <Button variant="contained" href={`/event/ticket/${eventId}`}>
+                Show Ticket
+              </Button>
+            )}
           </Box>
           <iframe
             width={400}

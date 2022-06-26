@@ -24,7 +24,7 @@ import { useRouter } from "next/router.js";
 import TextField from "@mui/material/TextField";
 import LoadingView from "../../../components/LoadingView.js";
 
-const ScanPage = () => {
+const TicketPage = () => {
   const { textSize, subtitleSize, titleSize, isWidescreen } = getSize();
   const { account } = useWeb3React();
   const router = useRouter();
@@ -98,4 +98,4 @@ const ScanPage = () => {
   );
 };
 
-export default ScanPage;
+export default TicketPage;

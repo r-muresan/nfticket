@@ -209,7 +209,7 @@ const AppNav = ({ children }) => {
               Events
             </Button>
             <Button href="/yours" color="inversePrimary">
-              Your Events
+              {isWidescreen ? "Your Events" : "Yours"}
             </Button>
             <Button href="/host" color="inversePrimary">
               Host
@@ -240,125 +240,5 @@ const AppNav = ({ children }) => {
     </Box>
   );
 };
-
-// const drawerContentLoggedIn = (
-//   <Box sx={{ width: 280 }}>
-//     <List>
-//       <ListItem>
-//         <ListItemIcon>
-//           <AccountBalanceWalletIcon color="dark" fontSize="large" />
-//         </ListItemIcon>
-//         <ListItemText
-//           primary="Wallet connected"
-//           secondary={user?.address?.substring(0, 20) + "..."}
-//         />
-//       </ListItem>
-//     </List>
-//     <Divider />
-//     <List>
-//       <ListItemButton onClick={() => setShowClaimable(!showClaimable)}>
-//         <ListItemIcon>
-//           <RedeemOutlinedIcon color="dark" fontSize="large" />
-//         </ListItemIcon>
-//         <ListItemText
-//           primary="Claim items"
-//           secondary={`${
-//             user?.claimableItems?.builds?.length +
-//             Number(user?.claimableItems?.funds > 0)
-//           } items to claim`}
-//         ></ListItemText>
-//         {showClaimable ? <ExpandLess /> : <ExpandMore />}
-//       </ListItemButton>
-//       <Collapse in={showClaimable} unmountOnExit>
-//         <Divider />
-//         {user?.claimableItems?.funds > 0 && (
-//           <List disablePadding>
-//             <ListItem
-//               secondaryAction={
-//                 <IconButton onClick={() => store.dispatch(claimFunds)}>
-//                   <DoneIcon />
-//                 </IconButton>
-//               }
-//             >
-//               <ListItemIcon sx={{ marginLeft: "5px" }}>
-//                 <img
-//                   src="/logos/matic-token-icon.svg"
-//                   width="25px"
-//                   height="25px"
-//                 />
-//               </ListItemIcon>
-//               <ListItemText
-//                 primary={`${(
-//                   user?.claimableItems?.funds / Math.pow(10, 18)
-//                 ).toFixed(2)} MATIC`}
-//               />
-//             </ListItem>
-//           </List>
-//         )}
-//         {user?.claimableItems?.builds?.map((buildId) => (
-//           <List disablePadding key={`ClaimableBuilds${buildId}`}>
-//             <ListItem
-//               secondaryAction={
-//                 <IconButton
-//                   onClick={() => {
-//                     store.dispatch(claimBuild(buildId));
-//                   }}
-//                 >
-//                   <DoneIcon />
-//                 </IconButton>
-//               }
-//             >
-//               <ListItemIcon sx={{ marginLeft: "5px" }}>
-//                 <ConstructionOutlinedIcon color="dark" />
-//               </ListItemIcon>
-//               <ListItemText>
-//                 <Link
-//                   href={`/build/${buildId}`}
-//                   color="inherit"
-//                   underline="none"
-//                 >
-//                   {`Build #${buildId}`}
-//                 </Link>
-//               </ListItemText>
-//             </ListItem>
-//           </List>
-//         ))}
-//         <Divider />
-//       </Collapse>
-//       <ListItemButton onClick={() => setShowBuilds(!showBuilds)}>
-//         <ListItemIcon>
-//           <ConstructionOutlinedIcon color="dark" fontSize="large" />
-//         </ListItemIcon>
-//         <ListItemText
-//           primary="Your Builds"
-//           secondary={`You own ${user?.ownedBuilds?.length} builds`}
-//         ></ListItemText>
-//         {showBuilds ? <ExpandLess /> : <ExpandMore />}
-//       </ListItemButton>
-//       <Collapse in={showBuilds} unmountOnExit>
-//         <Divider />
-//         {user?.ownedBuilds?.map((buildId) => (
-//           <List disablePadding key={`OwnedBuilds${buildId}`}>
-//             <ListItem>
-//               <ListItemIcon sx={{ marginLeft: "5px" }}>
-//                 <ConstructionOutlinedIcon color="dark" />
-//               </ListItemIcon>
-//               <ListItemText>
-//                 <Link
-//                   href={`/build/${buildId}`}
-//                   color="inherit"
-//                   underline="none"
-//                 >
-//                   {`Build #${buildId}`}
-//                 </Link>
-//               </ListItemText>
-//             </ListItem>
-//           </List>
-//         ))}
-//         <Divider />
-//       </Collapse>
-//     </List>
-//   </Box>
-// );
 
 export default AppNav;

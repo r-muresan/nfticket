@@ -124,7 +124,7 @@ export const EventCard = ({
             <Box display="flex" gap={1} alignItems="center">
               <PeopleIcon />
               <Typography fontSize={textSize}>
-                {`0/${maxParticipants}`}
+                {`${maxParticipants}`}
               </Typography>
             </Box>
             <Box display="flex" gap={1} alignItems="center">
