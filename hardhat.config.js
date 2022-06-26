@@ -12,6 +12,12 @@ module.exports = {
       gas: 2100000,
       gasPrice: 8000000000,
     },
+    cronos: {
+      url: "https://evm-t3.cronos.org",
+      accounts: [process.env.PRIVATE_KEY],
+      gas: 2100000,
+      gasPrice: 5000 * 1e9,
+    },
   },
   etherscan: {
     apiKey: process.env.POLYGONSCAN_API_KEY,

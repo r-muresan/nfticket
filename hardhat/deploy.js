@@ -8,7 +8,6 @@ const { ethers } = require("hardhat");
 async function main() {
   const NFTicket1155 = await ethers.getContractFactory("NFTicket1155");
   let contract = await NFTicket1155.deploy();
-  console.log(contract);
   await contract.deployed();
   console.log(contract.address);
 }
