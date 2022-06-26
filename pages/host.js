@@ -139,7 +139,6 @@ const HostPage = () => {
                   isWhitelisted,
                   eventLink
                 );
-                window.location.href = "/events";
               }}
               variant="contained"
               disabled={loading}

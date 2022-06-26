@@ -51,7 +51,11 @@ function CustomSelect({ key }) {
       >
         {/*Don't add a placeholder, instead use renderValue to control emptry value text */}
         {scoreData.map((scoreValue, index) => {
-          return <MenuItem value={scoreValue}>{scoreValue}</MenuItem>;
+          return (
+            <MenuItem value={scoreValue} key={index}>
+              {scoreValue}
+            </MenuItem>
+          );
         })}
       </Select>
     </FormControl>
@@ -59,20 +63,21 @@ function CustomSelect({ key }) {
 }
 
 const IsActive = (eventArray) => {
-
   console.log("eventArray", eventArray);
-  console.log("total time", eventArray[0].voteDelay + eventArray[0].creationTime)
-  console.log("TIME NOW", Date.now()/1000);
-  
-  
+  console.log(
+    "total time",
+    eventArray[0].voteDelay + eventArray[0].creationTime
+  );
+  console.log("TIME NOW", Date.now() / 1000);
+
   const activeProposals = eventArray.filter(
-    (proposal) => proposal.voteDelay + proposal.creationTime > (Date.now()/1000)
+    (proposal) => proposal.voteDelay + proposal.creationTime > Date.now() / 1000
   );
 
   const inactiveProposals = eventArray.filter(
-    (proposal) => proposal.voteDelay + proposal.creationTime < (Date.now()/1000)
+    (proposal) => proposal.voteDelay + proposal.creationTime < Date.now() / 1000
   );
-  return { activeProposals, inactiveProposals};
+  return { activeProposals, inactiveProposals };
 };
 
 const SetProposals = (eventArray) => {
@@ -96,18 +101,18 @@ const SetProposals = (eventArray) => {
 const Active = ({ proposal }) => {
   return (
     <Box>
-        <Box
-          sx={{ border: 1 }}
-          borderRadius={"16px"}
-          height={150}
-          p={2}
-          boxShadow={4}
-          bgcolor={SECONDARY}
-        >
-          <Typography>Proposal: {proposal.proposing}</Typography>
-          <CustomSelect> </CustomSelect>
-          <Button variant="contained">Vote</Button>
-        </Box>
+      <Box
+        sx={{ border: 1 }}
+        borderRadius={"16px"}
+        height={150}
+        p={2}
+        boxShadow={4}
+        bgcolor={SECONDARY}
+      >
+        <Typography>Proposal: {proposal.proposing}</Typography>
+        <CustomSelect> </CustomSelect>
+        <Button variant="contained">Vote</Button>
+      </Box>
     </Box>
   );
 };
@@ -122,14 +127,13 @@ const ActiveProposal = ({ activeProposals }) => {
         {activeProposals.map((proposal, index) => (
           <Active proposal={proposal} key={index} />
         ))}
-      
       </Box>
     </Box>
   );
 };
 
 const Inactive = ({ proposal }) => {
-  console.log
+  console.log;
   return (
     <Box>
       <Box
@@ -154,11 +158,9 @@ const InactiveProposal = ({ inactiveProposals }) => {
         Inactive Proposals
       </Typography>
       <Box height={200} overflow={"auto"} sx={{ border: 1 }}>
-      
         {inactiveProposals.map((proposal, index) => (
           <Inactive proposal={proposal} key={index} />
         ))}
-      
       </Box>
     </Box>
   );
@@ -208,8 +210,8 @@ const Event = () => {
     );
   }
 
-console.log(proposals)  ;
-return (
+  console.log(proposals);
+  return (
     <Box
       display="flex"
       alignItems="center"
@@ -223,7 +225,7 @@ return (
         <EventDetails event={event} />
 
         <ActiveProposal activeProposals={IsActive(proposals).activeProposals} />
-      
+
         <InactiveProposal
           inactiveProposals={IsActive(proposals).inactiveProposals}
         />
