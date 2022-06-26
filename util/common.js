@@ -90,3 +90,16 @@ export const parseEvent = (event) => {
     host: event.host,
   };
 };
+
+export const parseProposal = (proposal) => {
+  return {
+    id: parseInt(proposal.id),
+    proposing: proposal.proposing,
+    options: proposal.options,
+    voteDelay: parseInt(proposal.voteDelay),
+    creationTime: parseInt(proposal.creationTime),
+    vote: proposal.votes,
+  };
+}
+
+

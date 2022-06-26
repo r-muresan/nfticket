@@ -59,15 +59,20 @@ function CustomSelect({ key }) {
 }
 
 const IsActive = (eventArray) => {
-  console.log("eventArryay", eventArray);
+
+  console.log("eventArray", eventArray);
+  console.log("total time", eventArray[0].voteDelay + eventArray[0].creationTime)
+  console.log("TIME NOW", Date.now()/1000);
+  
+  
   const activeProposals = eventArray.filter(
-    (proposal) => proposal.voteDelay + proposal.creationTime < Date.now()
+    (proposal) => proposal.voteDelay + proposal.creationTime > (Date.now()/1000)
   );
 
   const inactiveProposals = eventArray.filter(
-    (proposal) => proposal.voteDelay + proposal.creationTime > Date.now()
+    (proposal) => proposal.voteDelay + proposal.creationTime < (Date.now()/1000)
   );
-  return { activeProposals: [], inactiveProposals };
+  return { activeProposals, inactiveProposals};
 };
 
 const SetProposals = (eventArray) => {
@@ -90,7 +95,7 @@ const SetProposals = (eventArray) => {
 
 const Active = ({ proposal }) => {
   return (
-    <li>
+    <Box>
         <Box
           sx={{ border: 1 }}
           borderRadius={"16px"}
@@ -103,7 +108,7 @@ const Active = ({ proposal }) => {
           <CustomSelect> </CustomSelect>
           <Button variant="contained">Vote</Button>
         </Box>
-    </li>
+    </Box>
   );
 };
 const ActiveProposal = ({ activeProposals }) => {
@@ -114,11 +119,10 @@ const ActiveProposal = ({ activeProposals }) => {
         Active Proposals
       </Typography>
       <Box height={200} overflow={"auto"} sx={{ border: 1 }}>
-      <ul>
         {activeProposals.map((proposal, index) => (
           <Active proposal={proposal} key={index} />
         ))}
-      </ul>
+      
       </Box>
     </Box>
   );
@@ -127,7 +131,7 @@ const ActiveProposal = ({ activeProposals }) => {
 const Inactive = ({ proposal }) => {
   console.log
   return (
-    <li>
+    <Box>
       <Box
         sx={{ border: 1 }}
         borderRadius={"16px"}
@@ -139,7 +143,7 @@ const Inactive = ({ proposal }) => {
         <Typography>Proposal: {proposal.proposing}</Typography>
         <Typography>Outcome:</Typography>
       </Box>
-    </li>
+    </Box>
   );
 };
 
@@ -150,11 +154,11 @@ const InactiveProposal = ({ inactiveProposals }) => {
         Inactive Proposals
       </Typography>
       <Box height={200} overflow={"auto"} sx={{ border: 1 }}>
-      <ul>
+      
         {inactiveProposals.map((proposal, index) => (
           <Inactive proposal={proposal} key={index} />
         ))}
-      </ul>
+      
       </Box>
     </Box>
   );
@@ -176,12 +180,12 @@ const EventDetails = ({ event }) => {
         boxShadow={3}
         bgcolor={SECONDARY}
       >
-        <Typography marginBottom={1}>Name: {event.name} </Typography>
+        <Typography marginBottom={1}>Event: {event.name} </Typography>
         <Typography marginBottom={1}>Host: {event.host} </Typography>
         <Typography marginBottom={1}>
           Date: {event.eventDate.toString()}
         </Typography>
-        <Typography>Location{event.location}</Typography>
+        <Typography>Location: {event.location}</Typography>
       </Box>
     </Box>
   );
@@ -204,7 +208,8 @@ const Event = () => {
     );
   }
 
-  return (
+console.log(proposals)  ;
+return (
     <Box
       display="flex"
       alignItems="center"

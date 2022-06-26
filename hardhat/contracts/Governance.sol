@@ -36,7 +36,8 @@ contract Governance is Ownable{
     }
 
     function submitProposal(uint256 _eventId, string memory _proposing, uint256 _voteDelay, string[] memory _options) public {
-        require(nfticket.getEventOwner(_eventId) == msg.sender, "caller is not the event owner");
+
+        //require(nfticket.getEventOwner(_eventId) == msg.sender, "caller is not the event owner");
         uint256[] memory _votes = new uint256[](_options.length);
         proposalInfo[proposalID].id = _eventId;
         proposalInfo[proposalID].proposing = _proposing;
@@ -46,7 +47,7 @@ contract Governance is Ownable{
         proposalInfo[proposalID].votes = _votes;
         
         proposalToEvent[proposalID] = _eventId;
-        eventToProposal[_eventId].push(proposalInfo[proposalID].id);
+        eventToProposal[_eventId].push(proposalID);
         numProposals[_eventId]++;
     }
 

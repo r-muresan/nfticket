@@ -7,6 +7,7 @@ import {
   getNFTContractSignature,
   parseEvent,
   requestFunction,
+  parseProposal,
 } from "./common";
 import { getEventId, useAlert } from "./hooks";
 import { NFTStorage } from "nft.storage";
@@ -31,10 +32,11 @@ export const useGovernanceContract = () => {
     setLoading(true);
     await requestFunction({
       func: async () => {
+        console.log(eventId);
         const proposals = await contract.getProposals(eventId);
-        
-        setProposals(proposals);
-        console.log("DONE");
+        console.log("PROPOSALS BEFORE", proposals);
+
+        setProposals(proposals.map((proposal) => parseProposal(proposal)));
       },
       failMessage: () =>
         setAlert({ message: "Could not get proposals.", type: "error" }),
@@ -48,17 +50,21 @@ export const useGovernanceContract = () => {
       return;
     }
 
-    const contract = getGovernanceContractSignature(library.getSigner());
-
+    const contract = await getGovernanceContractSignature(library.getSigner());
+    console.log("contract addr", contract);
+    //const contract2 = await getNFTContractSignature(library.getSigner());
+   
     await requestFunction({
       func: async () => {
         setLoading(true)
-        const newProposal = contract.submitProposal(0, "get robert a cape", 1658822915, ["yes", "no"]);
-        console.log(newProposal);
+
+        const newProposal = contract.submitProposal(5, "BOOBOOr", 1658811875, ["yes", "no"]);
+        //console.log("new proposal", newProposal);
       },
       failMessage: () =>
         setAlert({ message: "Could not submit proposal.", type: "error" }),
     })
+    await getProposals
     setLoading(false)
   }
 
